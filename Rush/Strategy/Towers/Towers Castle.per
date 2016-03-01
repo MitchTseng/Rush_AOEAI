@@ -1,0 +1,256 @@
+;---------------------------------------------------------Attack Timer--------------------------------------------------
+
+(defconst AttackTimer 1)
+(defconst AttackStatus 0)
+
+(defrule
+  (goal AttackStatus 0)
+=>
+  (set-goal AttackStatus 1)
+  (enable-timer AttackTimer 30)
+)
+
+;--------------------------------------------------------Set Town Size-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+=>
+	(set-strategic-number sn-maximum-town-size 20)
+	(disable-self)
+)
+
+;--------------------------------------------------------Advance Units-----------------------------------------------------
+
+(defrule
+	(can-research ri-pikeman)
+=>
+	(research ri-pikeman)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-eagle-warrior)
+=>
+	(research ri-eagle-warrior)
+	(disable-self)
+)
+
+;--------------------------------------------------------Build Buildings-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(can-build barracks)
+	(building-type-count-total barracks < 3)
+=>
+	(build barracks)
+)
+
+(defrule
+	(current-age == castle-age)
+	(building-available stable)
+	(can-build stable)
+	(building-type-count-total stable < 2)
+=>
+	(build stable)
+)
+
+(defrule
+	(can-build monastery)
+	(building-type-count-total monastery < 1)
+=>
+	(build monastery)
+)
+
+(defrule
+	(can-build siege-workshop)
+	(building-type-count-total siege-workshop < 2)
+=>
+	(build siege-workshop)
+)
+
+(defrule
+	(can-build monastery)
+	(building-type-count-total monastery < 1)
+=>
+	(build monastery)
+)
+
+;--------------------------------------------------------Train Units-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(can-train battering-ram-line)
+	(unit-type-count battering-ram-line < 3)
+=>
+	(train battering-ram-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train knight-line)
+	(unit-type-count knight-line < 60)
+=>
+	(train knight-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(not(can-train knight-line))
+	(can-train camel-line)
+	(unit-type-count camel-line < 60)
+=>
+	(train camel-line)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(gold-amount > 200)
+	(not(can-train knight-line))
+	(can-train eagle-warrior-line)
+	(unit-type-count eagle-warrior-line < 5)
+=>
+	(train eagle-warrior-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(not(can-train knight-line))
+	(can-train eagle-warrior-line)
+	(unit-type-count eagle-warrior-line < 60)
+=>
+	(train eagle-warrior-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train monk)
+	(unit-type-count monk < 10)
+=>
+	(train monk)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train spearman-line)
+	(unit-type-count spearman-line < 35)
+	(or
+		(wood-amount > 200)
+		(unit-type-count spearman-line < 15)
+	)
+=>
+	(train spearman-line)
+)
+
+;--------------------------------------------------------Attack Timing-----------------------------------------------------
+
+;(defrule
+;	(current-age == castle-age)
+;	(unit-type-count battering-ram-line > 2)
+;=>
+;	(disable-timer AttackTimer)
+;	(set-goal AttackStatus 0)
+;	(attack-now)
+;	(chat-local "Attack type Rams")
+;)
+
+(defrule
+	(current-age == castle-age)
+	(unit-type-count knight-line > 10)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Knights")
+)
+
+(defrule
+	(current-age == castle-age)
+	(unit-type-count eagle-warrior-line > 10)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Eagle Warriors")
+)
+
+(defrule
+	(current-age == castle-age)
+	(unit-type-count camel-line > 10)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Camels")
+)
+
+(defrule
+	(current-age == castle-age)
+	(military-population > 25)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Army")
+)
+
+;------------------------------------------------------Build More Buildings-------------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(can-build barracks)
+	(building-type-count-total barracks < 5)
+	(wood-amount > 400)
+=>
+	(build-forward barracks)
+	(set-strategic-number sn-maximum-town-size 100)
+)
+
+(defrule
+	(current-age == castle-age)
+	(building-available stable)
+	(can-build stable)
+	(building-type-count-total stable < 4)
+	(wood-amount > 400)
+=>
+	(build-forward stable)
+	(set-strategic-number sn-maximum-town-size 100)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-build castle)
+=>
+	(build castle)
+)
+
+;--------------------------------------------------------Resource Banlance-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(wood-amount > 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-gold-gatherer-percentage 25)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-stone-gatherer-percentage 5)
+)
+
+(defrule
+	(current-age == castle-age)
+	(food-amount > 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 25)
+	(set-strategic-number sn-gold-gatherer-percentage 30)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+(defrule
+	(current-age == castle-age)
+	(gold-amount > 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-stone-gatherer-percentage 5)
+)

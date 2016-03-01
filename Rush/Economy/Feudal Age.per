@@ -1,0 +1,194 @@
+;Feudal age =======================================================================================================================
+(defrule
+	(current-age == feudal-age)
+;	(goal TRAIN-MORE-VILLAGERS YES)
+	(goal ECO-MODE BOOM)
+	(goal ENABLE-VILLAGER-PRODUCTION YES)
+	(unit-type-count-total villager < MAX-NUM-VILLAGERS)
+	(or
+		(unit-type-count-total villager < 31)
+		(or
+			(food-amount < 700)
+			(and
+				(food-amount >= 850)
+				(not(can-research castle-age))
+			)
+		)
+	)
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+	(current-age == feudal-age)
+	(goal ECO-MODE BALANCE)
+	(goal ENABLE-VILLAGER-PRODUCTION YES)
+	(unit-type-count-total villager < MAX-NUM-VILLAGERS)
+	(or
+		(unit-type-count-total villager < 40)
+		(not(can-research ri-wheel-barrow))
+	)
+	(not(can-research castle-age))
+	(can-train villager)
+=>
+	(train villager)
+)
+
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-goal TRANSITION-TO-AGE NONE)
+	(disable-self)
+)
+(defrule
+	(current-age == feudal-age)
+	(goal ECO-MODE BOOM)
+	(goal AUTO-BUILD-REQUIRED-BUILDINGS YES)
+	(building-type-count-total market < 1)
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mill > 0)
+	(building-type-count-total stable == 0)
+	(building-type-count-total archery-range == 0)
+	(food-amount >= 500)
+	(can-build market)
+=>
+	(up-assign-builders c: market c: 3)
+	(build market)
+)
+(defrule
+	(current-age == feudal-age)
+	(goal ECO-MODE BOOM)
+	(goal AUTO-BUILD-REQUIRED-BUILDINGS YES)
+	(building-type-count-total blacksmith < 1)
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mill > 0)
+	(food-amount >= 500)	
+	(can-build blacksmith)
+=>
+	(up-assign-builders c: blacksmith c: 2)
+	(build blacksmith)
+)
+
+;(defrule
+;	(current-age == feudal-age)
+;	(building-type-count-total market < 1)
+;	(building-type-count-total lumber-camp > 0)
+;	(building-type-count-total mill > 0)
+;	(food-amount >= 600)
+;	(can-build market)
+;=>
+;	(up-assign-builders c: market c: 2)
+;	(up-set-placement-data my-player-number villager-class c: 2)
+;	(up-build place-control 0 c: market)
+;)
+;(defrule
+;	(current-age == feudal-age)
+;	(building-type-count-total blacksmith < 1)
+;	(building-type-count-total lumber-camp > 0)
+;	(building-type-count-total mill > 0)
+;	(food-amount >= 600)	
+;	(can-build blacksmith)
+;=>
+;	(up-assign-builders c: blacksmith c: 2)
+;	(up-set-placement-data my-player-number villager-class c: 2)
+;	(up-build place-control 0 c: blacksmith)
+;)
+;(defrule	;drop the food in feudal age to upto castle
+;	(current-age == feudal-age)
+;	(not(goal TRANSITION-TO-AGE castle-age))
+;	(food-amount >= 600)
+;	(food-amount < 800)
+;	(research-available castle-age)
+;=>
+;	(up-drop-resources food c: 5)
+;)
+;(defrule	;drop the gold in feudal age to upto castle
+;	(current-age == feudal-age)
+;	(not(goal TRANSITION-TO-AGE castle-age))
+;	(gold-amount >= 150)
+;	(gold-amount < 200)
+;	(research-available castle-age)
+;=>
+;	(up-drop-resources gold c: 5)
+;)
+
+(defrule
+;	(up-compare-goal MAX-AGE > FEUDAL-AGE)
+	(goal ALLOW-AGE-UP YES)
+	(can-research castle-age)
+	(unit-type-count-total villager >= 31)
+=>
+	(research castle-age)
+	(set-goal TRANSITION-TO-AGE castle-age)
+	(set-strategic-number sn-maximum-food-drop-distance 8)
+	(set-strategic-number sn-maximum-wood-drop-distance 8)
+)
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE castle-age)
+		(or
+			(current-age > feudal-age)
+			(goal ECO-MODE BALANCE)
+		)
+	)
+	(can-research ri-double-bit-axe)
+=>
+	(research ri-double-bit-axe)
+)
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE castle-age)
+		(or
+			(current-age > feudal-age)
+			(goal ECO-MODE BALANCE)
+		)
+	)
+	(can-research ri-horse-collar)
+=>
+	(research ri-horse-collar)
+)
+(defrule
+	(research-completed ri-horse-collar)
+	(research-completed ri-double-bit-axe)
+	(goal ECO-MODE BALANCE)
+	(can-research ri-wheel-barrow)
+=>
+	(research ri-wheel-barrow)
+)
+(defrule
+	(research-completed ri-wheel-barrow)
+	(goal ECO-MODE BALANCE)
+	(can-research ri-gold-mining)
+=>
+	(research ri-gold-mining)
+)
+(defrule
+	(research-completed ri-wheel-barrow)
+	(goal ECO-MODE BALANCE)
+	(can-research ri-town-watch)
+=>
+	(research ri-town-watch)
+)
+(defrule
+	(research-completed ri-gold-mining)
+	(goal ECO-MODE BALANCE)
+	(can-research ri-stone-mining)
+=>
+	(research ri-stone-mining)
+)
+
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE castle-age)
+		(current-age > feudal-age)
+	)
+	(unit-type-count-total villager >= 30)
+=>
+	(set-strategic-number sn-wood-gatherer-percentage 25)
+	(set-strategic-number sn-food-gatherer-percentage 55)
+	(set-strategic-number sn-gold-gatherer-percentage 10)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+	(set-strategic-number sn-maximum-food-drop-distance 12)
+	(disable-self)
+)
+

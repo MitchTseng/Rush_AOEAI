@@ -1,0 +1,238 @@
+;----------------------------------------------------------Upgrade Units-----------------------------------------------------------
+
+(defrule
+	(can-research ri-fletching)
+=>
+	(research ri-fletching)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-scale-mail)
+	(current-age == castle-age)
+=>
+	(research ri-scale-mail)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-forging)
+	(current-age == castle-age)
+=>
+	(research ri-forging)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-iron-casting)
+	(research-completed ri-forging)
+=>
+	(research ri-iron-casting)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-blast-furnace)
+	(research-completed ri-iron-casting)
+=>
+	(research ri-blast-furnace)
+	(disable-self)
+)
+
+;------------------------------------------------------Upgrade Knights----------------------------------------------------------------
+
+(defrule
+	(can-research ri-bloodlines)
+=>
+	(research ri-bloodlines)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-husbandry)
+=>
+	(research ri-husbandry)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-cavalier)
+=>
+	(research ri-cavalier)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-scale-barding)
+	(current-age == castle-age)
+=>
+	(research ri-scale-barding)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-chain-barding)
+	(research-completed ri-scale-barding)
+=>
+	(research ri-chain-barding)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-scale-barding)
+	(research-completed ri-chain-barding)
+=>
+	(research ri-scale-barding)
+	(disable-self)
+)
+
+;----------------------------------------------------------Economy Upgrade-----------------------------------------------------------------------------
+
+(defrule
+	(can-research ri-gold-mining)
+=>
+	(research ri-gold-mining)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-gold-shaft-mining)
+=>
+	(research ri-gold-shaft-mining)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-double-bit-axe)
+=>
+	(research ri-double-bit-axe)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-bow-saw)
+=>
+	(research ri-bow-saw)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-two-man-saw)
+=>
+	(research ri-two-man-saw)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-horse-collar)
+=>
+	(research ri-double-bit-axe)
+	(disable-self)
+)
+
+(defrule
+	(can-research  ri-heavy-plow)
+=>
+	(research ri-bow-saw)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-crop-rotation)
+=>
+	(research ri-two-man-saw)
+	(disable-self)
+)
+
+(defrule
+	(can-research  ri-wheel-barrow)
+	(current-age == castle-age)
+=>
+	(research ri-wheel-barrow)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-hand-cart)
+=>
+	(research ri-hand-cart)
+	(disable-self)
+)
+
+;----------------------------------------------------------University & Castle--------------------------------------------------
+
+(defrule
+	(can-research ri-stonecutting)
+=>
+	(research ri-stonecutting)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-murder-holes)
+=>
+	(research ri-murder-holes)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-siege-engineers)
+=>
+	(research ri-siege-engineers)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-sappers)
+=>
+	(research ri-sappers)
+	(disable-self)
+)
+
+;--------------------------------------------------------------Siege Workshop-------------------------------------------------------------------
+
+(defrule
+	(can-research ri-capped-ram)
+=>
+	(research ri-capped-ram)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-siege-ram)
+=>
+	(research ri-siege-ram)
+	(disable-self)
+)
+
+;----------------------------------------------------------Upgrade Time-----------------------------------------------------------
+
+(defrule
+	(goal ALLOW-AGE-UP YES)
+	(unit-type-count-total villager >= dark-max-villager)
+	(can-research feudal-age)
+=>
+	(research feudal-age)
+	(set-goal TRANSITION-TO-AGE feudal-age)
+	(disable-self)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-research castle-age)
+	(unit-type-count-total villager >= 31)
+=>
+	(research castle-age)
+	(set-goal TRANSITION-TO-AGE castle-age)
+	(disable-self)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-research imperial-age)
+	(building-type-count town-center >= 3)
+=>
+	(research imperial-age)
+	(set-goal TRANSITION-TO-AGE imperial-age)
+	(disable-self)
+)

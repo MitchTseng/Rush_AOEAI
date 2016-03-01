@@ -1,0 +1,112 @@
+(defrule
+	(or
+		(goal RESEARCH-SCOUT-UPGRADES YES)
+		(or
+			(goal RESEARCH-KNIGHT-UPGRADES YES)
+			(or
+				(goal RESEARCH-CAMEL-UPGRADES YES)
+				(goal RESEARCH-CAVALRY-UU-UPGRADES YES)
+			)
+		)
+	)
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES NO)
+=>
+	(set-goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+)
+(defrule
+	(goal RESEARCH-SCOUT-UPGRADES NO)
+	(goal RESEARCH-KNIGHT-UPGRADES NO)
+	(goal RESEARCH-CAMEL-UPGRADES NO)
+	(goal RESEARCH-CAVALRY-UU-UPGRADES NO)
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+=>
+	(set-goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES NO)
+)								
+;Scout upgrades
+(defrule
+	(goal RESEARCH-SCOUT-UPGRADES YES)
+	(can-research ri-light-cavalry)
+=>
+	(research ri-light-cavalry)
+)
+(defrule
+	(goal RESEARCH-SCOUT-UPGRADES YES)
+	(can-research ri-hussar)
+=>
+	(research ri-hussar)
+)
+;knight upgrades
+(defrule
+	(goal RESEARCH-KNIGHT-UPGRADES YES)
+	(can-research knight)
+=>
+	(research cavalier)
+)
+(defrule
+	(goal RESEARCH-KNIGHT-UPGRADES YES)
+	(can-research ri-paladin)
+=>
+	(research ri-paladin)
+)
+;camel upgrades
+(defrule
+	(goal RESEARCH-CAMEL-UPGRADES YES)
+	(can-research ri-heavy-camel)
+=>
+	(research ri-heavy-camel)
+)
+
+;blacksmith ups
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(can-research ri-scale-barding)
+=>
+	(research ri-scale-barding)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(can-research ri-bloodlines)
+=>
+	(research ri-bloodlines)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(research-completed ri-scale-barding)
+	(can-research ri-forging)
+=>
+	(research ri-forging)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(can-research ri-chain-barding)
+=>
+	(research ri-chain-barding)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(research-completed ri-chain-barding)
+	(can-research ri-iron-casting)
+=>
+	(research ri-iron-casting)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(research-completed ri-iron-casting)
+	(not(research-available ri-bloodlines))
+	(can-research ri-husbandry)
+=>
+	(research ri-husbandry)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(can-research ri-plate-barding)
+=>
+	(research ri-plate-barding)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES YES)
+	(research-completed ri-plate-barding)
+	(can-research ri-blast-furnace)
+=>
+	(research ri-blast-furnace)
+)

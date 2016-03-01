@@ -1,0 +1,193 @@
+;castle age========================================================================================================================
+(defrule
+	(current-age == castle-age)
+=>
+	(set-goal TRANSITION-TO-AGE NONE)
+	(set-strategic-number sn-cap-civilian-builders 20)
+	(set-strategic-number sn-cap-civilian-gatherers 500)
+	(disable-self)
+)
+(defrule
+	(current-age == castle-age)
+;	(goal TRAIN-MORE-VILLAGERS YES)
+	(unit-type-count-total villager < MAX-NUM-VILLAGERS)
+	(goal ENABLE-VILLAGER-PRODUCTION YES)
+	(not(can-research imperial-age))
+	(not(can-research ri-wheel-barrow))
+	(can-train villager)
+	(or	;not close to imp up yet
+		(food-amount < 900)
+		(or
+			(gold-amount < 700)
+			(or
+				(food-amount > 1000)
+				(building-type-count town-center < 4)
+			)
+		)
+	)
+=>
+	(train villager)
+)
+(defrule
+	(can-research ri-bow-saw)
+=>
+	(research ri-bow-saw)
+)
+(defrule
+	(current-age >= castle-age)
+	(can-research ri-wheel-barrow)
+=>
+	(research ri-wheel-barrow)
+)
+(defrule
+	(current-age == castle-age)
+	(food-amount >= 200)
+	(building-type-count-total town-center < NUM-CASTLE-AGE-TCS)
+	(up-pending-objects c: town-center <= 1)
+	(can-build town-center)
+=>
+	(up-assign-builders c: 621 c: 6) ; town-center-foundation: 621
+;	(chat-to-all "building castle age TC")
+	(build town-center)
+)
+(defrule
+	(current-age == castle-age)
+	(goal ECO-MODE BOOM)
+	(goal AUTO-BUILD-REQUIRED-BUILDINGS YES)
+	(building-type-count-total town-center >= NUM-CASTLE-AGE-TCS)
+	(or
+		(building-type-count farm >= 25)
+		(food-amount >= 700)
+	)
+	(building-type-count-total monastery == 0)
+	(can-build monastery)
+=>
+	(up-assign-builders c: monastery c: 3)
+	(build monastery)
+)
+(defrule
+	(current-age == castle-age)
+	(goal ECO-MODE BOOM)
+	(goal AUTO-BUILD-REQUIRED-BUILDINGS YES)
+	(building-type-count-total town-center >= NUM-CASTLE-AGE-TCS)
+	(or
+		(building-type-count farm >= 25)
+		(food-amount >= 700)
+	)
+	(building-type-count-total university == 0)
+	(can-build university)
+=>
+	(up-assign-builders c: university c: 3)
+	(build university)
+)
+
+;(defrule
+;	(current-age == castle-age)
+;	(building-type-count-total town-center >= 4)
+;	(or
+;		(building-type-count farm >= 25)
+;		(food-amount >= 800)
+;	)
+;	(building-type-count-total monastery == 0)
+;	(can-build monastery)
+;=>
+;	(up-assign-builders c: monastery c: 3)
+;	(up-set-placement-data my-player-number villager-class c: 2)
+;	(up-build place-control 0 c: monastery)
+;)
+;(defrule
+;	(current-age == castle-age)
+;	(building-type-count-total town-center >= 4)
+;	(or
+;		(building-type-count farm >= 25)
+;		(food-amount >= 800)
+;	)
+;	(building-type-count-total university == 0)
+;	(can-build university)
+;=>
+;	(up-assign-builders c: university c: 3)
+;	(up-set-placement-data my-player-number villager-class c: 2)
+;	(up-build place-control 0 c: university)
+;)
+(defrule
+;	(up-compare-goal MAX-AGE > CASTLE-AGE)
+	(goal ALLOW-AGE-UP YES)
+	(can-research imperial-age)
+=>
+	(research imperial-age)
+	(set-goal TRANSITION-TO-AGE imperial-age)
+)
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE imperial-age)
+		(current-age == imperial-age)
+	)
+	(can-research ri-hand-cart)
+=>
+	(research ri-hand-cart)
+)
+(defrule
+	(goal ECO-MODE BALANCE)
+	(can-research ri-hand-cart)
+=>
+	(research ri-hand-cart)
+)
+(defrule
+	(goal ECO-MODE BALANCE)
+	(can-research ri-heavy-plow)
+=>
+	(research ri-heavy-plow)
+)
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE imperial-age)
+		(current-age == imperial-age)
+	)
+	(can-research ri-heavy-plow)
+=>
+	(research ri-heavy-plow)
+)
+(defrule
+	(current-age >= castle-age)
+	(not(research-available ri-heavy-plow))
+	(can-research ri-gold-mining)
+=>
+	(research ri-gold-mining)
+)
+(defrule
+	(current-age >= castle-age)
+	(not(research-available ri-gold-mining))
+	(can-research ri-stone-mining)
+=>
+	(research ri-stone-mining)
+)
+(defrule
+	(not(research-available ri-hand-cart))
+	(can-research ri-gold-shaft-mining)
+=>
+	(research ri-gold-shaft-mining)
+)
+(defrule
+	(not(research-available ri-gold-shaft-mining))
+	(can-research ri-stone-shaft-mining)
+=>
+	(research ri-stone-shaft-mining)
+)
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE imperial-age)
+		(current-age == imperial-age)
+	)
+	(can-research ri-town-watch)
+=>
+	(research ri-town-watch)
+)
+(defrule
+	(or
+		(goal TRANSITION-TO-AGE imperial-age)
+		(current-age == imperial-age)
+	)
+	(can-research ri-town-patrol)
+=>
+	(research ri-town-patrol)
+)

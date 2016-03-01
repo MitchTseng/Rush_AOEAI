@@ -1,0 +1,192 @@
+(defrule
+	(or
+		(unit-type-count archer-line >= 10)
+		(or
+			(unit-type-count skirmisher-line >= 10)
+			(or
+				(unit-type-count cavalry-archer-line >= 10)
+				(and
+					(goal MY-UNIQUE-UNIT-TYPE ARCHER)
+					(unit-type-count my-unique-unit-line >= 10)
+				)
+			)
+		)
+	)
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES NO)
+=>
+	(set-goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+)
+(defrule
+	(unit-type-count archer-line < 10)
+	(unit-type-count skirmisher-line < 10)
+	(unit-type-count cavalry-archer-line < 10)
+	(or
+		(not(goal MY-UNIQUE-UNIT-TYPE ARCHER))
+		(unit-type-count my-unique-unit-line < 10)
+	)
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+=>
+	(set-goal ALLOW-BLACKSMITH-ARCHER-UPGRADES NO)
+)
+(defrule
+	(or
+		(and
+			(goal MY-UNIQUE-UNIT-TYPE HAND-CANNONEER)
+			(unit-type-count my-unique-unit >= 10)
+		)
+		(unit-type-count hand-cannoneer >= 10)
+	)
+	(goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES NO)
+=>
+	(set-goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES YES)
+)
+(defrule	;this looks complex, but is only the negation of the above expression. 
+	(and
+		(nor	;true if any of them is false
+			(goal MY-UNIQUE-UNIT-TYPE HAND-CANNONEER)
+			(unit-type-count my-unique-unit >= 10)
+		)
+		(not(unit-type-count hand-cannoneer >= 10))
+	)
+	(goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES YES)
+=>
+	(set-goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES NO)
+)
+
+;Archer-line ups
+(defrule
+	(unit-type-count archer >= 10)
+	(can-research ri-crossbow)
+=>
+	(research ri-crossbow)
+)
+(defrule
+	(unit-type-count crossbowman >= 20)
+	(can-research ri-arbalest)
+=>
+	(research ri-arbalest)
+)
+;Cavalry archer up
+(defrule
+	(unit-type-count cavalry-archer >= 20)
+	(can-research ri-heavy-cavalry-archer)
+=>
+	(research ri-heavy-cavalry-archer)
+)
+(defrule
+	(or
+		(unit-type-count cavalry-archer >= 10)
+		(or
+			(and
+				(goal MY-UNIQUE-UNIT-TYPE CAVALRY-ARCHER)
+				(unit-type-count my-unique-unit >= 10)
+			)
+			(unit-type-count conquistador-line >= 10)
+		)
+	)
+	(can-research ri-bloodlines)
+=>
+	(research ri-bloodlines)
+)
+
+(defrule
+	(unit-type-count cavalry-archer >= 20)
+	(research-completed ri-leather-archer-armor)
+	(or
+		(research-completed ri-bloodlines)
+		(not(research-available ri-bloodlines))
+	)
+	(can-research ri-husbandry)
+=>
+	(research ri-husbandry)
+)
+(defrule
+	(unit-type-count cavalry-archer >= 20)
+	(research-completed ri-heavy-cavalry-archer)
+	(can-research ri-parthian-tactics)
+=>
+	(research ri-parthian-tactics)
+)
+;skirmisher up
+(defrule
+	(unit-type-count skirmisher >= 20)
+	(can-research ri-elite-skirmisher)
+=>
+	(research ri-elite-skirmisher)
+)
+;blacksmith ups
+(defrule
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+	(can-research ri-fletching)
+=>
+	(research ri-fletching)
+)
+(defrule
+	(or
+		(and
+			(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+			(research-completed ri-fletching)
+		)
+		(goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES YES)
+	)
+	(can-research ri-padded-archer-armor)
+=>
+	(research ri-padded-archer-armor)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+	(can-research ri-bodkin-arrow)
+=>
+	(research ri-bodkin-arrow)
+)
+(defrule
+	(or
+		(and
+			(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+			(research-completed ri-bodkin-arrow)
+		)
+		(goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES YES)
+	)
+	(can-research ri-leather-archer-armor)
+=>
+	(research ri-leather-archer-armor)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)	
+	(research-completed ri-leather-archer-armor)
+	(can-research ri-ballistics)
+=>
+	(research ri-ballistics)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+	(building-type-count-total town-center >= 2)
+	(can-research ri-thumb-ring)
+=>
+	(research ri-thumb-ring)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+	(can-research ri-bracer)
+=>
+	(research ri-bracer)
+)
+(defrule
+	(or
+		(and
+			(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)
+			(not(research-available ri-bracer))
+		)
+		(goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES YES)
+	)	
+	(can-research ri-ring-archer-armor)
+=>
+	(research ri-ring-archer-armor)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-ARCHER-UPGRADES YES)	
+	(not(research-available ri-bracer))
+	(can-research ri-chemistry)
+=>
+	(research ri-chemistry)
+)

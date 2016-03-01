@@ -1,0 +1,55 @@
+#load-if-defined POPULATION-CAP-25
+(defconst max-civ 20)
+(defconst min-civ 10)
+#end-if
+#load-if-defined POPULATION-CAP-50
+(defconst max-civ 32)
+(defconst min-civ 16)
+#end-if
+#load-if-defined POPULATION-CAP-75
+(defconst max-civ 60)
+(defconst min-civ 30)
+#end-if
+#load-if-defined POPULATION-CAP-100
+(defconst max-civ 70)
+(defconst min-civ 35)
+#end-if
+#load-if-defined POPULATION-CAP-125
+(defconst max-civ 80)
+(defconst min-civ 40)
+#end-if
+#load-if-defined POPULATION-CAP-150
+(defconst max-civ 100)
+(defconst min-civ 50)
+#end-if
+#load-if-defined POPULATION-CAP-175
+(defconst max-civ 110)
+(defconst min-civ 55)
+#end-if
+#load-if-defined POPULATION-CAP-200
+(defconst max-civ 150)
+(defconst min-civ 75)
+#end-if
+#load-if-defined POPULATION-CAP-300
+(defconst max-civ 200)
+(defconst min-civ 100)
+#end-if
+#load-if-defined POPULATION-CAP-400
+(defconst max-civ 270)
+(defconst min-civ 135)
+#end-if
+#load-if-defined POPULATION-CAP-500
+(defconst max-civ 350)
+(defconst min-civ 175)
+#end-if
+
+(defconst MAX-NUM-VILLAGERS max-civ)
+(defconst MIN-NUM-VILLAGERS min-civ)
+
+(defconst DEL-VILL-FOOD-LIMIT 10000)
+(defconst DEL-VILL-WOOD-LIMIT 10000)
+(defconst DEL-VILL-GOLD-LIMIT 5000)
+(defconst DEL-VILL-STONE-LIMIT 2000)
+
+(defconst NUM-CASTLE-AGE-TCS 3)
+(defconst NUM-IMPERIAL-AGE-TCS 10)

@@ -1,0 +1,200 @@
+;---------------------------------------------------------Attack Timer--------------------------------------------------
+
+(defconst AttackTimer 1)
+(defconst AttackStatus 0)
+
+(defrule
+  (goal AttackStatus 0)
+=>
+  (set-goal AttackStatus 1)
+  (enable-timer AttackTimer 180)
+)
+
+;--------------------------------------------------------Set Town Size-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+=>
+	(set-strategic-number sn-minimum-town-size 12)
+	(set-strategic-number sn-maximum-town-size 12)
+	(disable-self)
+)
+
+;--------------------------------------------------------Advance Units-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(can-research ri-pikeman)
+=>
+	(research ri-pikeman)
+	(disable-self)
+)
+
+;--------------------------------------------------------Economy-------------------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+(defrule
+	(current-age == castle-age)
+	(food-amount > 500)
+	(wood-amount < 300)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 25)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 45)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+(defrule
+	(current-age == castle-age)
+	(wood-amount > 500)
+	(food-amount < 300)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+(defrule
+	(current-age == castle-age)
+	(gold-amount > 500)
+	(food-amount < 300)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 5)
+	(set-strategic-number sn-wood-gatherer-percentage 45)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+;--------------------------------------------------------Build Buildings-----------------------------------------------------
+
+(defrule
+	(goal TRANSITION-TO-AGE castle-age)
+	(can-build barracks)
+	(building-type-count-total barracks < 2)
+=>
+	(build barracks)
+)
+
+(defrule
+	(goal TRANSITION-TO-AGE castle-age)
+	(building-available stable)
+	(can-build stable)
+	(building-type-count-total stable < 2)
+=>
+	(build stable)
+)
+
+(defrule
+	(can-build monastery)
+	(building-type-count-total monastery < 2)
+=>
+	(build monastery)
+)
+
+(defrule
+	(can-build siege-workshop)
+	(building-type-count-total stable > 1)
+	(building-type-count-total monastery > 1)
+	(building-type-count-total siege-workshop < 1)
+=>
+	(build siege-workshop)
+)
+
+;--------------------------------------------------------Train Units-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(can-train battering-ram-line)
+	(unit-type-count battering-ram-line < 3)
+=>
+	(train battering-ram-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train monk)
+	(unit-type-count monk < 60)
+=>
+	(train monk)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train knight-line)
+	(unit-type-count knight-line < 60)
+=>
+	(train knight-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(not(can-train knight-line))
+	(can-train camel-line)
+	(unit-type-count camel-line < 60)
+=>
+	(train camel-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(not(can-train knight-line))
+	(can-train eagle-warrior-line)
+	(unit-type-count eagle-warrior-line < 5)
+=>
+	(train eagle-warrior-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(not(can-train knight-line))
+	(can-train eagle-warrior-line)
+	(unit-type-count eagle-warrior-line < 60)
+	(or
+		(current-age == castle-age)
+		(gold-amount > 200)
+	)
+=>
+	(train eagle-warrior-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train spearman-line)
+	(unit-type-count spearman-line < 35)
+	(or
+		(wood-amount > 200)
+		(unit-type-count spearman-line < 15)
+	)
+=>
+	(train spearman-line)
+)
+
+;--------------------------------------------------------Attack Timing-----------------------------------------------------
+
+(defrule
+	(military-population > 15)
+	(timer-triggered AttackTimer)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Army")
+)
+
+;------------------------------------------------------Build More Buildings-------------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+	(can-build castle)
+=>
+	(build castle)
+)

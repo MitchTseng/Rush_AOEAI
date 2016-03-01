@@ -1,0 +1,220 @@
+;Farming===========================================================================================================================
+(defrule
+	(current-age == dark-age)
+	(goal ECO-MODE BOOM)
+	(not(goal TRANSITION-TO-AGE feudal-age))
+	(building-type-count-total lumber-camp > 0)
+	(nand	;dont build farms when wants to collect gold, but there is no mining camp. Spares wood for mining camp.
+		(building-type-count-total mining-camp == 0)
+		(strategic-number sn-gold-gatherer-percentage > 0)
+	)
+	(food-amount < 400)
+	(wood-amount > 180)
+	(can-build farm)
+=>
+	(build farm)
+)
+
+(defrule
+	(goal TRANSITION-TO-AGE feudal-age)
+	(goal ECO-MODE BOOM)
+	(wood-amount >= 300)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(current-age == feudal-age)
+	(goal ECO-MODE BOOM)
+	(not(goal TRANSITION-TO-AGE castle-age))
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mill > 0)
+	(food-amount < 500)
+	(wood-amount > 180)
+	(can-build farm)
+=>
+	(build farm)
+)
+
+(defrule
+	(goal TRANSITION-TO-AGE castle-age)
+	(goal ECO-MODE BOOM)
+	(wood-amount >= 600)
+	(can-build farm)
+=>
+	(build farm)
+)
+
+(defrule
+	(current-age == castle-age)
+	(goal ECO-MODE BOOM)
+	(not(goal TRANSITION-TO-AGE imperial-age))
+	(building-type-count-total university == 0)
+	(or
+		(building-type-count-total town-center >= 4)
+		(and
+			(building-type-count-total town-center < 4)
+			(food-amount < 200)
+		)
+	)
+	(dropsite-min-distance wood <= 4)	;no need for new lumber camp
+	(building-type-count-total lumber-camp > 0)
+	(food-amount < 300)
+	(wood-amount >= 300)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(current-age == castle-age)
+	(goal ECO-MODE BOOM)
+	(not(goal TRANSITION-TO-AGE imperial-age))
+	(building-type-count-total monastery == 0)
+	(or
+		(building-type-count-total town-center >= 4)
+		(and
+			(building-type-count-total town-center < 4)
+			(food-amount < 200)
+		)
+	)
+	(dropsite-min-distance wood <= 4)	;no need for new lumber camp
+	(building-type-count-total lumber-camp > 0)
+	(food-amount < 300)
+	(wood-amount >= 300)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(current-age == castle-age)
+	(goal ECO-MODE BOOM)
+	(not(goal TRANSITION-TO-AGE imperial-age))
+	(building-type-count-total university > 0)
+	(building-type-count-total monastery > 0)
+	(or
+		(building-type-count-total town-center >= 4)
+		(and
+			(building-type-count-total town-center < 4)
+			(food-amount < 200)
+		)
+	)
+	(food-amount < 800)
+	(wood-amount >= 300)
+	(building-type-count-total lumber-camp > 0)
+	(can-build farm)
+=>
+	(build farm)
+)
+
+
+(defrule
+	(goal ECO-MODE BOOM)
+	(or
+		(current-age == imperial-age)
+		(goal TRANSITION-TO-AGE imperial-age)
+	)
+	(building-type-count-total lumber-camp > 0)
+	(food-amount < 200)		
+	(idle-farm-count < 5)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(goal ECO-MODE BOOM)
+	(or
+		(current-age == imperial-age)
+		(goal TRANSITION-TO-AGE imperial-age)
+	)
+	(building-type-count-total lumber-camp > 0)
+	(food-amount < 700)
+	(wood-amount > 500)	
+	(idle-farm-count < 5)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(goal ECO-MODE BOOM)
+	(or
+		(current-age == imperial-age)
+		(goal TRANSITION-TO-AGE imperial-age)
+	)
+	(building-type-count-total lumber-camp > 0)
+	(food-amount < 2000)
+	(wood-amount > 2000)
+	(idle-farm-count < 5)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(goal ECO-MODE BOOM)
+	(or
+		(current-age == imperial-age)
+		(goal TRANSITION-TO-AGE imperial-age)
+	)
+	(building-type-count-total lumber-camp > 0)
+	(food-amount < 4000)
+	(wood-amount > 3000)
+	(idle-farm-count < 5)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(wood-amount >= 4000)
+;	(food-amount < 4000)
+	(building-type-count-total farm < 50)
+	(idle-farm-count < 5)
+	(up-pending-objects c: farm < 3)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(goal ECO-MODE BALANCE)
+	(goal ENABLE-FARM-BUILDING YES)
+	(idle-farm-count < 5)
+	(up-pending-objects c: farm < 3)
+	(can-build farm)
+=>
+	(build farm)
+)
+;bulding extra mills=================================================================================================================================================================
+(defrule
+	(building-type-count farm > 15)
+	(building-type-count lumber-camp > 0)
+	(building-type-count-total mill < 2)
+;	(idle-farm-count < 3)
+	(can-build mill)
+=>
+	(build mill)
+)
+(defrule
+	(building-type-count farm > 25)
+	(building-type-count lumber-camp > 0)
+	(building-type-count-total mill < 3)
+;	(idle-farm-count < 3)
+	(can-build mill)
+=>
+	(build mill)
+)
+(defrule
+	(building-type-count farm > 35)
+	(building-type-count lumber-camp > 0)
+	(building-type-count-total mill < 4)
+;	(idle-farm-count < 3)
+	(can-build mill)
+=>
+	(build mill)
+)
+(defrule
+	(building-type-count farm > 45)
+	(building-type-count lumber-camp > 0)
+	(building-type-count-total mill < 5)
+;	(idle-farm-count < 3)
+	(can-build mill)
+=>
+	(build mill)
+)

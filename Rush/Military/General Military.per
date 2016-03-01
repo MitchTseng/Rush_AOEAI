@@ -1,0 +1,143 @@
+#load-if-defined DIFFICULTY-EASIEST
+(defrule
+	(true)
+=>
+	(set-difficulty-parameter ability-to-dodge-missiles 100)
+	(set-difficulty-parameter ability-to-maintain-distance 100)
+	(disable-self)
+)
+#end-if
+#load-if-defined DIFFICULTY-EASY
+(defrule
+	(true)
+=>
+	(set-difficulty-parameter ability-to-dodge-missiles 100)
+	(set-difficulty-parameter ability-to-maintain-distance 100)
+	(disable-self)
+)
+#end-if
+#load-if-defined DIFFICULTY-MODERATE
+(defrule
+	(true)
+=>
+	(set-difficulty-parameter ability-to-dodge-missiles 50)
+	(set-difficulty-parameter ability-to-maintain-distance 50)
+	(disable-self)
+)
+#end-if
+#load-if-defined DIFFICULTY-HARD
+(defrule
+	(true)
+=>
+	(set-difficulty-parameter ability-to-dodge-missiles 0)
+	(set-difficulty-parameter ability-to-maintain-distance 0)
+	(disable-self)
+)
+#end-if
+#load-if-defined DIFFICULTY-HARDEST
+
+
+(defrule
+	(true)
+=>
+	(set-difficulty-parameter ability-to-dodge-missiles 0)
+	(set-difficulty-parameter ability-to-maintain-distance 0)
+	(disable-self)
+)
+#end-if
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-attack-group-size-randomness 0)
+	(set-strategic-number sn-attack-group-gather-spacing 3)
+	(set-strategic-number sn-ignore-attack-group-under-attack 0)
+	(set-strategic-number sn-minimum-attack-group-size 10)
+	(set-strategic-number sn-maximum-attack-group-size 80)
+	(set-strategic-number sn-group-form-distance 40)
+	(set-strategic-number sn-group-commander-selection-method 0)
+	(set-strategic-number sn-group-leader-defense-distance 3)
+	(set-strategic-number sn-attack-intelligence 1)
+	(set-strategic-number sn-percent-attack-soldiers 0)
+	(set-strategic-number sn-number-attack-groups 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-target-evaluation-siege-weapon 555)
+	(set-strategic-number sn-target-evaluation-damage-capability 1)
+	(set-strategic-number sn-target-evaluation-in-progress 0)
+	(set-strategic-number sn-target-evaluation-distance 100)
+	(set-strategic-number sn-target-evaluation-hitpoints 0)
+	(set-strategic-number sn-target-evaluation-range 0)
+	(set-strategic-number sn-target-evaluation-rof 0)
+	(set-strategic-number sn-target-evaluation-time-kill-ratio 1)
+	(set-strategic-number sn-target-evaluation-attack-attempts 0)
+	(set-strategic-number sn-target-evaluation-ally-proximity 0)
+	(set-strategic-number sn-target-evaluation-randomness 0)
+	(set-strategic-number sn-target-evaluation-boat 0)
+	(set-strategic-number sn-target-evaluation-continent 0)
+	(set-strategic-number sn-target-evaluation-kills 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-percent-enemy-sighted-response 100)
+	(set-strategic-number sn-defend-overlap-distance 1)
+	(set-strategic-number sn-defense-distance 3)
+	(set-strategic-number sn-sentry-distance 6)	;Marius suggested 9 for this. I set it smaller, to make constant battles (TS like) less likely
+	(set-strategic-number sn-sentry-distance-variation 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-goal ATTACK-IN-PROGRESS NO)
+	(set-goal TOWN-SIZE-ATTACK-IN-PROGRESS NO)
+	(disable-self)
+)
+(defrule
+	(players-building-count any-enemy > 0)
+=>
+	(up-find-player enemy find-closest CLOSEST-ENEMY)
+	(up-modify-sn sn-target-player-number g:= CLOSEST-ENEMY)
+	(up-modify-sn sn-focus-player-number g:= CLOSEST-ENEMY)
+)
+
+;(defrule
+;	(goal ATTACK YES)
+;	(not(town-under-attack))
+;=>
+;	(set-strategic-number sn-percent-attack-soldiers 100)	;attack with all soldiers, even in easy difficulties
+;	(set-strategic-number sn-number-attack-groups 20)
+;)
+;(defrule
+;	(or
+;		(goal ATTACK NO)
+;		(town-under-attack)
+;	)
+;=>
+;	; (up-retreat-now); if you want to
+;	(set-strategic-number sn-percent-attack-soldiers 0)
+;	(set-strategic-number sn-number-attack-groups 0)
+;)
+;resign===================================================================================================================================
+;(defrule
+;	(building-type-count-total town-center == 0)
+;	(building-type-count castle == 0)
+;	(military-population < 15)
+;=>
+;	;(set-signal 0)
+;	(enable-timer RESIGN-TIMER 15)
+;	;(chat-to-all "resign timer enabled")
+;	(disable-self)
+;)
+;(defrule
+;	(timer-triggered RESIGN-TIMER)
+;=>
+;	(disable-timer RESIGN-TIMER)
+;	;(chat-to-all "resign timer triggered")
+;	(resign)
+;)

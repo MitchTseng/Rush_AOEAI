@@ -1,0 +1,56 @@
+;Dark age =========================================================================================================================
+;(defrule
+;	(up-compare-goal MAX-AGE >= DARK-AGE)
+;=>
+;	(chat-local-to-self "MAX-AGE >= dark-age")
+;)
+(defrule
+	(current-age == dark-age)
+;	(goal TRAIN-MORE-VILLAGERS YES)
+	(unit-type-count-total villager < dark-max-villager)
+	(goal ENABLE-VILLAGER-PRODUCTION YES)
+	(or
+		(research-completed ri-loom)
+		(unit-type-count villager < 12)
+	)
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+;	(up-compare-goal MAX-AGE > DARK-AGE)
+	(goal ALLOW-AGE-UP YES)
+	(unit-type-count-total villager >= dark-max-villager)
+	(can-research feudal-age)
+=>
+	(research feudal-age)
+	(set-goal TRANSITION-TO-AGE feudal-age)
+)
+;(defrule	;drop the food in dark age of villager is not buing trained
+;	(current-age == dark-age)
+;	(not(goal TRANSITION-TO-AGE feudal-age))
+;	(up-pending-objects c: villager == 0)
+;	(not(can-train villager))
+;	(housing-headroom > 0)
+;	(food-amount >= 30)
+;=>
+;	(up-drop-resources food c: 5)
+;)
+
+(defrule
+	(or
+		(not(can-train villager))
+		(unit-type-count-total villager >= 12)
+	)
+	(can-research ri-loom)
+=>
+	(research ri-loom)
+)
+;(defrule
+;	(current-age == dark-age)
+;	(not(goal TRANSITION-TO-AGE feudal-age))
+;	(food-amount >= 400)
+;	(unit-type-count-total villager >= dark-max-villager)
+;=>
+;	(up-drop-resources food c: 5)	;vills with at least 5 food will drop it
+;)

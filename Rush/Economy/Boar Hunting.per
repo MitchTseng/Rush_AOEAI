@@ -1,0 +1,118 @@
+;(defrule
+;	(true)
+;=>
+;	(set-goal BOAR-GOAL 0)
+;	(chat-local-to-self "Boar hunting loaded")
+;	(disable-self)
+;)
+;
+;(defrule
+;   (research-completed ri-loom)
+;   (unit-type-count-total villager > 9)
+;   (building-type-count-total mill == 0)
+;   (dropsite-min-distance boar-hunting < 32)
+;   (up-compare-goal BOAR-GOAL < 1)
+;   (unit-type-count-total villager-hunter == 0)
+;=>
+;  (set-strategic-number sn-maximum-food-drop-distance 32)
+;   (set-strategic-number sn-maximum-hunt-drop-distance 32)
+;   (set-strategic-number sn-minimum-number-hunters 1)
+;   (up-retask-gatherers food c: 1)
+;   (set-strategic-number sn-minimum-boar-lure-group-size 1)
+;   (set-goal BOAR-GOAL 1)
+;   (chat-local-to-self "Boar-goal 0")
+;   (disable-self)
+;)
+;
+;(defrule
+;   (research-completed ri-loom)
+;   (unit-type-count villager > 12)
+;   (or(food-amount > 80)
+;   (unit-type-count villager > 14))
+;   (dropsite-min-distance boar-hunting < 32)
+;   (up-compare-goal BOAR-GOAL < 1)
+;   (unit-type-count-total villager-hunter == 0)
+;=>
+;   (set-strategic-number sn-maximum-food-drop-distance 32)
+;   (set-strategic-number sn-maximum-hunt-drop-distance 32)
+;   (set-strategic-number sn-minimum-number-hunters 1)
+;   (up-retask-gatherers food c: 1)
+;   (set-strategic-number sn-minimum-boar-lure-group-size 1)
+;   (set-goal BOAR-GOAL 1)
+;   (chat-local-to-self "Boar-goal 0")
+;   (disable-self)
+;)
+;
+;(defrule
+;   (goal BOAR-GOAL 1)
+;   (unit-type-count villager-hunter > 0)
+;   (dropsite-min-distance boar-hunting < 10)
+;=>
+;   (set-goal BOAR-GOAL 2)
+;   (up-retask-gatherers food c: 5)
+;   (set-strategic-number sn-minimum-number-hunters 8)
+;   (set-strategic-number sn-maximum-hunt-drop-distance 32)
+;   (chat-local-to-self "Boar-goal 1")
+;   (disable-self)
+;)
+;
+;(defrule
+;   (goal BOAR-GOAL 2)
+;   (up-remaining-boar-amount < 230)
+;=>
+;   (set-goal BOAR-GOAL 3)
+;   (set-strategic-number sn-minimum-number-hunters 9)
+;   (set-strategic-number sn-minimum-boar-lure-group-size 1)
+;   (up-retask-gatherers villager-forager c: 1)
+;   (chat-local-to-self "Boar-goal 2")
+;   (disable-self)
+;)
+;
+;(defrule
+;   (goal BOAR-GOAL 3)
+;   (up-remaining-boar-amount == 0)
+;   (dropsite-min-distance boar-hunting < 10)
+;=>
+;   (set-strategic-number sn-minimum-number-hunters 8)
+;  (up-retask-gatherers food c: 1)
+;   (set-strategic-number sn-minimum-boar-lure-group-size 0)
+;   (set-goal BOAR-GOAL 4)
+;   (chat-local-to-self "Boar-goal 3")
+;   (disable-self)
+;)
+;
+;(defrule
+;   (goal BOAR-GOAL 4)
+;   (unit-type-count villager-hunter > 0)
+;   (dropsite-min-distance boar-hunting < 10)
+;=>
+;  (set-goal BOAR-GOAL 5)
+;  (up-retask-gatherers food c: 5)
+;   (set-strategic-number sn-minimum-number-hunters 6)
+;   (set-strategic-number sn-maximum-hunt-drop-distance 12)
+;   (chat-local-to-self "Boar-goal 4")
+;   (disable-self)
+;)
+;
+;(defrule
+;   (goal BOAR-GOAL 5)
+;   (up-remaining-boar-amount < 180)
+;=>
+;   (set-strategic-number sn-enable-boar-hunting 1)
+;   (set-strategic-number sn-minimum-number-hunters 0)
+;   (set-strategic-number sn-maximum-hunt-drop-distance 6)
+;   (set-goal BOAR-GOAL 6)
+;   (chat-local-to-self "Boar-goal 5")
+;   (disable-self)
+;)
+;
+; Villager retasking
+
+;(defrule
+;   (current-age == dark-age)
+;   (food-amount < 50)
+;   (up-pending-objects c: villager < 1)
+;=>
+;   (up-retask-gatherers food c: 50)
+;   (up-drop-resources food c: 5)
+;)

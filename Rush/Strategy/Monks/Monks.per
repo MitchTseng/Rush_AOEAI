@@ -1,0 +1,126 @@
+;--------------------------------------------------------Tower Rush Setting-----------------------------------------------------
+
+(defconst dark-max-villager 25)
+(defconst feudal-max-villager 27)
+
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(set-strategic-number sn-attack-intelligence 1)
+	(set-strategic-number sn-garrison-rams 1)
+	(set-strategic-number sn-gather-defense-units 1)
+
+	(set-strategic-number sn-number-defend-groups 30)
+	(set-strategic-number sn-defense-distance 45)
+	(set-strategic-number sn-sentry-distance 45)
+	(set-strategic-number sn-minimum-defend-group-size 10)
+	(set-strategic-number sn-maximum-defend-group-size 15)
+
+	(set-strategic-number sn-gold-defend-priority 2)
+	(set-strategic-number sn-town-defend-priority 1)
+)
+
+(defrule
+	(current-age == dark-age)
+	(goal TRANSITION-TO-AGE feudal-age)
+	(gold-amount < 200)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 60)
+	(set-strategic-number sn-gold-gatherer-percentage 00)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 60)
+	(set-strategic-number sn-gold-gatherer-percentage 5)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(goal TRANSITION-TO-AGE castle-age)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30)
+	(set-strategic-number sn-gold-gatherer-percentage 30)
+	(set-strategic-number sn-wood-gatherer-percentage 30)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+;--------------------------------------------------------Set Town Size-----------------------------------------------------
+
+(defrule
+	(current-age == dark-age)
+=>
+	(set-strategic-number sn-minimum-town-size 10)
+	(set-strategic-number sn-maximum-town-size 10)
+	(disable-self)
+)
+
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-strategic-number sn-minimum-town-size 10)
+	(set-strategic-number sn-maximum-town-size 10)
+	(disable-self)
+)
+
+;--------------------------------------------------------Build Buildings-----------------------------------------------------
+
+(defrule
+	(can-build barracks)
+	(goal TRANSITION-TO-AGE feudal-age)
+	(building-type-count-total barracks < 1)
+=>
+	(build barracks)
+)
+
+(defrule
+	(can-build archery-range)
+	(building-type-count-total archery-range < 1)
+=>
+	(build archery-range)
+)
+
+(defrule
+	(can-build blacksmith)
+	(building-type-count-total blacksmith < 1)
+=>
+	(build blacksmith)
+)
+
+;--------------------------------------------------------Train Units-----------------------------------------------------
+
+(defrule
+	(current-age == feudal-age)
+	(can-train spearman-line)
+	(unit-type-count spearman-line < 15)
+	(or
+		(food-amount > 850)
+		(unit-type-count spearman-line < 3)
+	)
+=>
+	(train spearman-line)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-train skirmisher-line)
+	(unit-type-count skirmisher-line < 35)
+	(or
+		(food-amount > 850)
+		(unit-type-count skirmisher-line < 10)
+	)
+=>
+	(train skirmisher-line)
+)
+
+;--------------------------------------------------------Load Other Files-----------------------------------------------------
+
+(load "Rush\Strategy\Monks\Monks Hunting")
+(load "Rush\Strategy\Monks\Monks Castle")
+(load "Rush\Strategy\Monks\Monks Research")

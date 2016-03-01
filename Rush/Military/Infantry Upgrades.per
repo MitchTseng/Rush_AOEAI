@@ -1,0 +1,130 @@
+(defrule
+	(or
+		(goal RESEARCH-SWORDSMAN-UPGRADES YES)
+		(or
+			(goal RESEARCH-SPEARMAN-UPGRADES YES)
+			(or
+				(goal RESEARCH-EAGLE-UPGRADES YES)
+				(goal RESEARCH-INFANTRY-UU-UPGRADES YES)
+			)
+		)
+	)
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES NO)
+=>
+	(set-goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+)
+(defrule
+	(goal RESEARCH-SWORDSMAN-UPGRADES NO)
+	(goal RESEARCH-SPEARMAN-UPGRADES NO)
+	(goal RESEARCH-EAGLE-UPGRADES NO)
+	(goal RESEARCH-INFANTRY-UU-UPGRADES NO)
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+=>
+	(set-goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES NO)
+)
+
+;militia-line upgrades
+(defrule
+	(goal RESEARCH-SWORDSMAN-UPGRADES YES)
+	(can-research ri-man-at-arms)
+=>
+	(research ri-man-at-arms)
+)
+(defrule
+	(goal RESEARCH-SWORDSMAN-UPGRADES YES)
+	(can-research ri-long-swordsman)
+=>
+	(research ri-long-swordsman)
+)
+(defrule
+	(goal RESEARCH-SWORDSMAN-UPGRADES YES)
+	(can-research ri-two-handed-swordsman)
+=>
+	(research ri-two-handed-swordsman)
+)
+(defrule
+	(goal RESEARCH-SWORDSMAN-UPGRADES YES)
+	(can-research ri-champion)
+=>
+	(research ri-champion)
+)
+;spear-line upgrades
+(defrule
+	(goal RESEARCH-SPEARMAN-UPGRADES YES)
+	(can-research ri-pikeman)
+=>
+	(research ri-pikeman)
+)
+(defrule
+	(goal RESEARCH-SPEARMAN-UPGRADES YES)
+	(can-research ri-halberdier)
+=>
+	(research ri-halberdier)
+)
+;eagle-line upgrades
+(defrule
+	(goal RESEARCH-EAGLE-UPGRADES YES)
+	(can-research ri-eagle-warrior)
+=>
+	(research ri-eagle-warrior)
+)
+(defrule
+	(goal RESEARCH-EAGLE-UPGRADES YES)
+	(can-research ri-elite-eagle-warrior)
+=>
+	(research ri-elite-eagle-warrior)
+)
+;blacksmith upgrades
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(can-research ri-scale-mail)
+=>
+	(research ri-scale-mail)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(research-completed ri-scale-mail)
+	(can-research ri-forging)
+=>
+	(research ri-forging)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(can-research ri-chain-mail)
+=>
+	(research ri-chain-mail)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(research-completed ri-chain-mail)
+	(can-research ri-iron-casting)
+=>
+	(research ri-iron-casting)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(research-completed ri-iron-casting)
+	(can-research ri-squires)
+=>
+	(research ri-squires)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(not(research-available ri-squires))	;researched already or not available for the civ
+	(can-research ri-tracking)
+=>
+	(research ri-tracking)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(can-research ri-plate-mail)
+=>
+	(research ri-plate-mail)
+)
+(defrule
+	(goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES YES)
+	(not(research-available ri-plate-mail))
+	(can-research ri-blast-furnace)
+=>
+	(research ri-blast-furnace)
+)

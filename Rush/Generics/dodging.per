@@ -1,0 +1,22 @@
+;Dodging projectiles
+
+(defrule
+	(difficulty == hard)
+=>
+	(set-difficulty-parameter ability-to-maintain-distance 80)
+	(set-difficulty-parameter ability-to-dodge-missiles 80)
+)
+
+(defrule
+	(difficulty == moderate)
+=>
+	(set-difficulty-parameter ability-to-maintain-distance 60)
+	(set-difficulty-parameter ability-to-dodge-missiles 60)
+)
+
+(defrule
+	(difficulty == normal)
+=>
+	(set-difficulty-parameter ability-to-maintain-distance 30)
+	(set-difficulty-parameter ability-to-dodge-missiles 30)
+)

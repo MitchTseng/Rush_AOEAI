@@ -1,0 +1,252 @@
+;--------------------------------------------------------Set Town Size-----------------------------------------------------
+
+(defrule
+	(current-age == castle-age)
+=>
+	(set-strategic-number sn-maximum-town-size 40)
+	(disable-self)
+)
+
+;--------------------------------------------------------Advance Units-----------------------------------------------------
+
+(defrule
+	(can-research ri-halberdier)
+=>
+	(research ri-halberdier)
+	(disable-self)
+)
+
+(defrule
+	(can-research ri-elite-eagle-warrior)
+=>
+	(research ri-elite-eagle-warrior)
+	(disable-self)
+)
+
+;--------------------------------------------------------Build Buildings-----------------------------------------------------
+
+(defrule
+	(current-age == imperial-age)
+	(can-build barracks)
+	(building-type-count-total barracks < 3)
+=>
+	(build barracks)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(building-available stable)
+	(can-build stable)
+	(building-type-count-total stable < 2)
+=>
+	(build stable)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(can-build monastery)
+	(building-type-count-total monastery < 2)
+=>
+	(build monastery)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(can-train monk)
+	(unit-type-count monk < 10)
+=>
+	(train monk)
+)
+
+(defrule
+	(can-build siege-workshop)
+	(building-type-count-total siege-workshop < 3)
+=>
+	(build siege-workshop)
+)
+
+;--------------------------------------------------------Train Units-----------------------------------------------------
+
+(defrule
+	(current-age == imperial-age)
+	(can-train battering-ram-line)
+	(unit-type-count battering-ram-line < 6)
+=>
+	(train battering-ram-line)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(can-train trebuchet)
+	(unit-type-count trebuchet < 5)
+=>
+	(train trebuchet)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(can-train knight-line)
+	(unit-type-count knight-line < 100)
+=>
+	(train knight-line)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(not(can-train knight-line))
+	(can-train camel-line)
+	(unit-type-count camel-line < 100)
+=>
+	(train camel-line)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(not(can-train knight-line))
+	(can-train eagle-warrior-line)
+	(unit-type-count eagle-warrior-line < 100)
+=>
+	(train eagle-warrior-line)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(can-train spearman-line)
+	(unit-type-count spearman-line < 55)
+	(or
+		(wood-amount > 200)
+		(unit-type-count spearman-line < 25)
+	)
+=>
+	(train spearman-line)
+)
+
+;--------------------------------------------------------Attack Timing-----------------------------------------------------
+
+;(defrule
+;	(current-age == imperial-age)
+;	(unit-type-count battering-ram-line > 5)
+;=>
+;	(disable-timer AttackTimer)
+;	(set-goal AttackStatus 0)
+;	(attack-now)
+;	(chat-local "Attack type Rams")
+;)
+
+(defrule
+	(current-age == imperial-age)
+	(unit-type-count knight-line > 10)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Knights")
+)
+
+(defrule
+	(current-age == imperial-age)
+	(unit-type-count eagle-warrior-line > 10)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Eagle Warriors")
+)
+
+(defrule
+	(current-age == imperial-age)
+	(unit-type-count camel-line > 10)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Camels")
+)
+
+(defrule
+	(current-age == imperial-age)
+	(military-population > 25)
+=>
+	(disable-timer AttackTimer)
+	(set-goal AttackStatus 0)
+	(attack-now)
+	(chat-local "Attack type Army")
+)
+
+;------------------------------------------------------Build More Buildings-------------------------------------------------------
+
+(defrule
+	(current-age == imperial-age)
+	(can-build barracks)
+	(building-type-count-total barracks < 7)
+	(wood-amount > 400)
+=>
+	(build-forward barracks)
+	(set-strategic-number sn-maximum-town-size 100)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(building-available stable)
+	(can-build stable)
+	(building-type-count-total stable < 6)
+	(wood-amount > 400)
+=>
+	(build-forward stable)
+	(set-strategic-number sn-maximum-town-size 100)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(can-build castle)
+=>
+	(build castle)
+)
+
+;--------------------------------------------------------Resource Banlance-----------------------------------------------------
+
+(defrule
+	(current-age == imperial-age)
+	(wood-amount > 500)
+	(food-amount < 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 25)
+	(set-strategic-number sn-wood-gatherer-percentage 30)
+	(set-strategic-number sn-stone-gatherer-percentage 5)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(food-amount > 500)
+	(wood-amount < 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 25)
+	(set-strategic-number sn-gold-gatherer-percentage 30)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(gold-amount < 500)
+	(food-amount > 500)
+	(wood-amount > 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 25)
+	(set-strategic-number sn-stone-gatherer-percentage 5)
+)
+
+(defrule
+	(current-age == imperial-age)
+	(gold-amount > 500)
+	(food-amount > 500)
+	(wood-amount > 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30)
+	(set-strategic-number sn-gold-gatherer-percentage 25)
+	(set-strategic-number sn-wood-gatherer-percentage 30)
+	(set-strategic-number sn-stone-gatherer-percentage 15)
+)

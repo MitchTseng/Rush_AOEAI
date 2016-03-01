@@ -1,0 +1,875 @@
+;Eco balance ======================================================================================================================
+;(defconst GOLD-MINE-LIMIT 4)
+(defrule
+	(true)
+=>
+	(enable-timer ECO-BALANCE-FREQUENCY-TIMER 1)
+	(disable-self)
+)
+
+(defrule
+	(food-amount < 200)
+=>
+	(set-goal FOOD-AMOUNT LOW)
+)
+(defrule
+	(food-amount >= 200)
+	(food-amount < 1000)
+=>
+	(set-goal FOOD-AMOUNT MEDIUM)
+)
+(defrule
+	(food-amount >= 1000)
+=>
+	(set-goal FOOD-AMOUNT HIGH)
+)
+
+(defrule
+	(wood-amount < 200)
+=>
+	(set-goal WOOD-AMOUNT LOW)
+)
+(defrule
+	(wood-amount >= 200)
+	(wood-amount < 1000)
+=>
+	(set-goal WOOD-AMOUNT MEDIUM)
+)
+(defrule
+	(wood-amount >= 1000)
+=>
+	(set-goal WOOD-AMOUNT HIGH)
+)
+
+(defrule
+	(gold-amount < 200)
+=>
+	(set-goal GOLD-AMOUNT LOW)
+)
+(defrule
+	(gold-amount >= 200)
+	(gold-amount < 1000)
+=>
+	(set-goal GOLD-AMOUNT MEDIUM)
+)
+(defrule
+	(gold-amount >= 1000)
+=>
+	(set-goal GOLD-AMOUNT HIGH)
+)
+
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+=>
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+;Villager deletion ==================================================================================================================================================================
+(defrule
+	(goal ECO-MODE BALANCE)
+	(goal ALLOW-VILLAGER-DELETION YES)
+	(food-amount >= DEL-VILL-FOOD-LIMIT)
+	(wood-amount >= DEL-VILL-WOOD-LIMIT)
+	(gold-amount >= DEL-VILL-GOLD-LIMIT)
+	(stone-amount >= DEL-VILL-STONE-LIMIT)
+	(unit-type-count villager > MIN-NUM-VILLAGERS)
+=>
+	(set-goal ENABLE-VILLAGER-PRODUCTION NO)
+	(delete-unit villager)
+)
+(defrule
+	(or
+		(goal ALLOW-VILLAGER-DELETION NO)
+		(or
+			(not(goal ECO-MODE BALANCE))
+			(or
+				(food-amount < DEL-VILL-FOOD-LIMIT)
+				(or
+					(wood-amount < DEL-VILL-WOOD-LIMIT)
+					(or
+						(gold-amount < DEL-VILL-GOLD-LIMIT)
+						(or
+							(stone-amount < DEL-VILL-STONE-LIMIT)
+							(unit-type-count villager < MIN-NUM-VILLAGERS)
+						)
+					)
+				)
+			)
+		)
+	)
+=>
+	(set-goal ENABLE-VILLAGER-PRODUCTION YES)
+)
+
+;well balanced - no need to do anything
+(defrule
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT LOW)
+	(goal WOOD-AMOUNT LOW)
+	(goal GOLD-AMOUNT LOW)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "in balance")
+)
+;(defrule
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT LOW)
+;	(goal WOOD-AMOUNT LOW)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;	(chat-local-to-self "in balance")
+;)
+
+(defrule
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT MEDIUM)
+	(goal WOOD-AMOUNT MEDIUM)
+	(goal GOLD-AMOUNT MEDIUM)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "in balance")
+)
+;(defrule
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT MEDIUM)
+;	(goal WOOD-AMOUNT MEDIUM)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;	(chat-local-to-self "in balance")
+;)
+
+(defrule
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT HIGH)
+	(goal WOOD-AMOUNT HIGH)
+	(goal GOLD-AMOUNT HIGH)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "in balance")
+)
+;(defrule
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT HIGH)
+;	(goal WOOD-AMOUNT HIGH)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;	(chat-local-to-self "in balance")
+;)
+;Low food
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT LOW)
+	(or
+		(goal WOOD-AMOUNT MEDIUM)
+		(goal WOOD-AMOUNT HIGH)
+	)
+	(or
+		(goal GOLD-AMOUNT MEDIUM)
+		(goal GOLD-AMOUNT HIGH)
+	)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 50)
+	(set-strategic-number sn-wood-gatherer-percentage 20)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(chat-local-to-self "balancing low food")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT LOW)
+;	(or
+;		(goal WOOD-AMOUNT MEDIUM)
+;		(goal WOOD-AMOUNT HIGH)
+;	)
+;	(or
+;		(goal GOLD-AMOUNT MEDIUM)
+;		(goal GOLD-AMOUNT HIGH)
+;	)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 65)
+;	(set-strategic-number sn-wood-gatherer-percentage 20)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing low food no gold")
+;)
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT MEDIUM)
+	(goal WOOD-AMOUNT HIGH)
+	(goal GOLD-AMOUNT HIGH)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 50)
+	(set-strategic-number sn-wood-gatherer-percentage 20)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(chat-local-to-self "balancing low food")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT MEDIUM)
+;	(goal WOOD-AMOUNT HIGH)
+;	(goal GOLD-AMOUNT HIGH)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 65)
+;	(set-strategic-number sn-wood-gatherer-percentage 20)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing low food no gold")
+;)
+;low wood
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal WOOD-AMOUNT LOW)
+	(or
+		(goal FOOD-AMOUNT MEDIUM)
+		(goal FOOD-AMOUNT HIGH)
+	)
+	(or
+		(goal GOLD-AMOUNT MEDIUM)
+		(goal GOLD-AMOUNT HIGH)
+	)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 50)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "balancing low wood")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal WOOD-AMOUNT LOW)
+;	(or
+;		(goal FOOD-AMOUNT MEDIUM)
+;		(goal FOOD-AMOUNT HIGH)
+;	)
+;	(or
+;		(goal GOLD-AMOUNT MEDIUM)
+;		(goal GOLD-AMOUNT HIGH)
+;	)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 20)
+;	(set-strategic-number sn-wood-gatherer-percentage 65)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low wood no gold")
+;)
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT HIGH)
+	(goal WOOD-AMOUNT MEDIUM)
+	(goal GOLD-AMOUNT HIGH)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 50)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "balancing low wood")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT HIGH)
+;	(goal WOOD-AMOUNT MEDIUM)
+;	(goal GOLD-AMOUNT HIGH)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 20)
+;	(set-strategic-number sn-wood-gatherer-percentage 65)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low wood no gold")
+;)
+;Low gold
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal GOLD-AMOUNT LOW)
+	(or
+		(goal FOOD-AMOUNT MEDIUM)
+		(goal FOOD-AMOUNT HIGH)
+	)
+	(or
+		(goal WOOD-AMOUNT MEDIUM)
+		(goal WOOD-AMOUNT HIGH)
+	)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 20)
+	(set-strategic-number sn-gold-gatherer-percentage 50)
+;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 4)
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "balancing low gold")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT HIGH)
+;	(goal WOOD-AMOUNT HIGH)
+;	(goal GOLD-AMOUNT MEDIUM)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 35)
+;	(set-strategic-number sn-wood-gatherer-percentage 35)
+;	(set-strategic-number sn-gold-gatherer-percentage 20)
+;;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:+ 4)
+;;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:+ 4)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low gold no gold")
+;)
+
+;High food
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(or
+		(goal FOOD-AMOUNT MEDIUM)
+		(goal FOOD-AMOUNT HIGH)
+	)
+	(goal WOOD-AMOUNT LOW)
+	(goal GOLD-AMOUNT LOW)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 10)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
+;	(up-modify-sn sn-food-gatherer-percentage c:- 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 2)
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "balancing high food")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(or
+;		(goal FOOD-AMOUNT MEDIUM)
+;		(goal FOOD-AMOUNT HIGH)
+;	)
+;	(goal WOOD-AMOUNT LOW)
+;	(goal GOLD-AMOUNT LOW)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 10)
+;	(set-strategic-number sn-wood-gatherer-percentage 70)
+;	(set-strategic-number sn-gold-gatherer-percentage 10)
+;;	(up-modify-sn sn-food-gatherer-percentage c:- 4)
+;;	(up-modify-sn sn-wood-gatherer-percentage c:+ 2)
+;;	(up-modify-sn sn-gold-gatherer-percentage c:+ 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing high food no gold")
+;)
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT HIGH)
+	(or
+		(goal WOOD-AMOUNT LOW)
+		(goal WOOD-AMOUNT MEDIUM)
+	)
+	(or
+		(goal GOLD-AMOUNT LOW)
+		(goal GOLD-AMOUNT MEDIUM)
+	)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 10)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
+	(set-goal ENABLE-FARM-BUILDING NO)
+	(chat-local-to-self "balancing high food")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT HIGH)
+;	(or
+;		(goal WOOD-AMOUNT LOW)
+;		(goal WOOD-AMOUNT MEDIUM)
+;	)
+;	(or
+;		(goal GOLD-AMOUNT LOW)
+;		(goal GOLD-AMOUNT MEDIUM)
+;	)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 10)
+;	(set-strategic-number sn-wood-gatherer-percentage 70)
+;	(set-strategic-number sn-gold-gatherer-percentage 10)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing high food no gold")
+;)
+
+;High wood
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT LOW)
+	(or
+		(goal WOOD-AMOUNT HIGH)
+		(goal WOOD-AMOUNT MEDIUM)
+	)
+	(goal GOLD-AMOUNT LOW)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 10)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(chat-local-to-self "balancing high wood")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(goal FOOD-AMOUNT LOW)
+;	(or
+;		(goal WOOD-AMOUNT HIGH)
+;		(goal WOOD-AMOUNT MEDIUM)
+;	)
+;	(goal GOLD-AMOUNT LOW)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 75)
+;	(set-strategic-number sn-wood-gatherer-percentage 10)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing high wood no gold")
+;)
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(or
+		(goal FOOD-AMOUNT LOW)
+		(goal FOOD-AMOUNT MEDIUM)
+	)
+	(goal WOOD-AMOUNT HIGH)
+	(or
+		(goal GOLD-AMOUNT LOW)
+		(goal GOLD-AMOUNT MEDIUM)
+	)
+;	(cc-players-unit-type-count 0 gold-mine > GOLD-MINE-LIMIT)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 10)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(chat-local-to-self "balancing high wood")
+)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(or
+;		(goal FOOD-AMOUNT LOW)
+;		(goal FOOD-AMOUNT MEDIUM)
+;	)
+;	(goal WOOD-AMOUNT HIGH)
+;	(or
+;		(goal GOLD-AMOUNT LOW)
+;		(goal GOLD-AMOUNT MEDIUM)
+;	)
+;	(cc-players-unit-type-count 0 gold-mine <= GOLD-MINE-LIMIT)
+;=>
+;	(set-strategic-number sn-food-gatherer-percentage 75)
+;	(set-strategic-number sn-wood-gatherer-percentage 10)
+;	(set-strategic-number sn-gold-gatherer-percentage 5)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing high wood no gold")
+;)
+;High gold
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT LOW)
+	(goal WOOD-AMOUNT LOW)
+	(or
+		(goal GOLD-AMOUNT HIGH)
+		(goal GOLD-AMOUNT MEDIUM)
+	)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 10)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(chat-local-to-self "balancing high gold")
+)
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(or
+		(goal FOOD-AMOUNT LOW)
+		(goal FOOD-AMOUNT MEDIUM)
+	)
+	(or
+		(goal WOOD-AMOUNT LOW)
+		(goal WOOD-AMOUNT MEDIUM)
+	)
+	(up-compare-goal GOLD-AMOUNT == HIGH)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 10)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(chat-local-to-self "balancing high gold")
+)
+
+;Commodity trade ============================================================================================================================================================================
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal FOOD-AMOUNT HIGH)
+	(or
+		(goal GOLD-AMOUNT LOW)
+		(goal GOLD-AMOUNT MEDIUM)
+	)
+	(can-sell-commodity food)
+=>
+	(sell-commodity food)
+	(chat-local-to-self "selling food")
+)
+(defrule
+	(food-amount >= 5000)
+	(gold-amount < 10000)
+	(can-sell-commodity food)
+=>
+	(sell-commodity food)
+	(chat-local-to-self "selling food")
+)
+
+(defrule
+	(unit-type-count villager >= 20)
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal WOOD-AMOUNT HIGH)
+	(or
+		(goal GOLD-AMOUNT LOW)
+		(goal GOLD-AMOUNT MEDIUM)
+	)
+	(can-sell-commodity wood)
+=>
+	(sell-commodity wood)
+	(chat-local-to-self "selling wood")
+)
+(defrule
+	(wood-amount >= 5000)
+	(gold-amount < 10000)
+	(can-sell-commodity wood)
+=>
+	(sell-commodity wood)
+	(chat-local-to-self "selling wood")
+)
+(defrule
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal GOLD-AMOUNT HIGH)
+	(goal FOOD-AMOUNT LOW)
+	(can-buy-commodity food)
+=>
+	(buy-commodity food)
+	(chat-local-to-self "buying food")
+)
+(defrule
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+	(goal ECO-MODE BALANCE)
+	(goal GOLD-AMOUNT HIGH)
+	(goal WOOD-AMOUNT LOW)
+	(can-buy-commodity wood)
+=>
+	(buy-commodity wood)
+	(chat-local-to-self "buying wood")
+)
+
+; UP rules below ========================================================================================================================================================================
+;Low food
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == LOW)
+;	(up-compare-goal WOOD-AMOUNT >= MEDIUM)
+;	(up-compare-goal GOLD-AMOUNT >= MEDIUM)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing low food")
+;)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == MEDIUM)
+;	(up-compare-goal WOOD-AMOUNT == HIGH)
+;	(up-compare-goal GOLD-AMOUNT == HIGH)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing low food")
+;)
+
+;low wood
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT >= MEDIUM)
+;	(up-compare-goal WOOD-AMOUNT == LOW)
+;	(up-compare-goal GOLD-AMOUNT >= MEDIUM)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low wood")
+;)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == HIGH)
+;	(up-compare-goal WOOD-AMOUNT == MEDIUM)
+;	(up-compare-goal GOLD-AMOUNT == HIGH)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 4)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low wood")
+;)
+;
+;Low gold
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT >= MEDIUM)
+;	(up-compare-goal WOOD-AMOUNT >= MEDIUM)
+;	(up-compare-goal GOLD-AMOUNT == LOW)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 4)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low gold")
+;)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == HIGH)
+;	(up-compare-goal WOOD-AMOUNT == HIGH)
+;	(up-compare-goal GOLD-AMOUNT == MEDIUM)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 4)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing low gold")
+;)
+
+;High food
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT >= MEDIUM)
+;	(up-compare-goal WOOD-AMOUNT == LOW)
+;	(up-compare-goal GOLD-AMOUNT == LOW)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:- 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing high food")
+;)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == HIGH)
+;	(up-compare-goal WOOD-AMOUNT <= MEDIUM)
+;	(up-compare-goal GOLD-AMOUNT <= MEDIUM)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:- 4)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 2)
+;	(set-goal ENABLE-FARM-BUILDING NO)
+;	(chat-local-to-self "balancing high food")
+;)
+;
+;;High wood
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == LOW)
+;	(up-compare-goal WOOD-AMOUNT >= MEDIUM)
+;	(up-compare-goal GOLD-AMOUNT == LOW)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 4)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 2)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing high wood")
+;)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT <= MEDIUM)
+;	(up-compare-goal WOOD-AMOUNT == HIGH)
+;	(up-compare-goal GOLD-AMOUNT <= MEDIUM)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:- 4)
+;	(up-modify-sn sn-gold-gatherer-percentage c:+ 2)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing high wood")
+;)
+;
+;;High gold
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == LOW)
+;	(up-compare-goal WOOD-AMOUNT == LOW)
+;	(up-compare-goal GOLD-AMOUNT >= MEDIUM)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 4)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing high gold")
+;)
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT <= MEDIUM)
+;	(up-compare-goal WOOD-AMOUNT <= MEDIUM)
+;	(up-compare-goal GOLD-AMOUNT == HIGH)
+;=>
+;	(up-modify-sn sn-food-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-wood-gatherer-percentage c:+ 2)
+;	(up-modify-sn sn-gold-gatherer-percentage c:- 4)
+;	(set-goal ENABLE-FARM-BUILDING YES)
+;	(chat-local-to-self "balancing high gold")
+;)
+;
+;;Commodity trade
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal FOOD-AMOUNT == HIGH)
+;	(up-compare-goal GOLD-AMOUNT < HIGH)
+;	(can-sell-commodity food)
+;=>
+;	(sell-commodity food)
+;	(chat-local-to-self "selling food")
+;)
+;
+;(defrule
+;	(unit-type-count villager >= 20)
+;	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+;	(goal ECO-MODE BALANCE)
+;	(up-compare-goal WOOD-AMOUNT == HIGH)
+;	(up-compare-goal GOLD-AMOUNT < HIGH)
+;	(can-sell-commodity wood)
+;=>
+;	(sell-commodity wood)
+;	(chat-local-to-self "selling wood")
+;)
+;
+;this rule should be the last one, so the others are always checked, before it resets the flag of the timer
+(defrule
+	(timer-triggered ECO-BALANCE-FREQUENCY-TIMER)
+=>
+	(disable-timer ECO-BALANCE-FREQUENCY-TIMER)
+	(enable-timer ECO-BALANCE-FREQUENCY-TIMER 10) ;<= villagers will be redistributed every this seconds
+	;(chat-local-to-self "timer triggered")
+)

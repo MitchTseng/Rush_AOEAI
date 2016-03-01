@@ -1,0 +1,352 @@
+;Beginning of the game=============================================================================================================
+(defrule
+	(game-time < 30)
+	(building-type-count-total house < 1)
+	(building-type-count-total town-center > 0)
+	(population-headroom > 3)
+	(housing-headroom < 5)
+	(can-build house)
+	(up-pending-objects c: house == 0)
+=>
+	(up-assign-builders c: house c: 2)
+	(build house)
+)
+;(defrule
+;	(game-time < 30)
+;	(building-type-count-total house < 1)
+;;	(up-pending-objects c: house < 1)
+;	(building-type-count-total town-center > 0)
+;	(population-headroom > 3)
+;	(housing-headroom < 4)
+;	(can-build house)
+;=>
+;	(up-assign-builders c: house c: 2)
+;	(up-set-placement-data my-player-number villager-class c: 2)
+;	(up-build place-control 0 c: house)
+;)
+
+;(defrule
+;	(game-time >= 30)
+;=>
+;	(up-assign-builders c: house c: 1)
+;	(disable-self)
+;)
+;Initial settings==================================================================================================================
+;(defrule
+;	(true)
+;=>
+;	(chat-local-to-self "General rules.per loaded")
+;	(disable-self)
+;)
+(defrule
+	(true)
+=>
+	(set-goal MY-UNIQUE-UNIT-TYPE INFANTRY)
+	(disable-self)
+)
+(defrule
+	(or
+		(civ-selected briton)
+		(or
+			(civ-selected chinese)
+			(or
+				(civ-selected italian)
+				(civ-selected mayan)
+			)
+		)
+	)
+=>
+	(set-goal MY-UNIQUE-UNIT-TYPE ARCHER)
+	(disable-self)
+)
+(defrule
+	(or
+		(civ-selected byzantine)
+		(or
+			(civ-selected hun)
+			(or
+				(civ-selected magyar)
+				(or
+					(civ-selected persian)
+					(or
+						(civ-selected saracen)
+						(civ-selected slavic)
+					)
+				)
+			)
+		)
+	)
+=>
+	(set-goal MY-UNIQUE-UNIT-TYPE CAVALRY)
+	(disable-self)
+)
+(defrule
+	(or
+		(civ-selected indian)
+		(or
+			(civ-selected korean)
+			(civ-selected mongol)
+		)
+	)
+=>
+	(set-goal MY-UNIQUE-UNIT-TYPE CAVALRY-ARCHER)
+	(disable-self)
+)
+(defrule
+	(or
+		(civ-selected turkish)
+		(civ-selected spanish)
+	)
+=>
+	(set-goal MY-UNIQUE-UNIT-TYPE HAND-CANNONEER)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-goal TRANSITION-TO-AGE NONE)
+	(set-goal ENABLE-FARM-BUILDING YES)
+	(set-goal ECO-MODE BOOM)
+	(set-goal ALLOW-AGE-UP YES)
+	(set-goal ALLOW-BLACKSMITH-ARCHER-UPGRADES NO)
+	(set-goal ALLOW-BLACKSMITH-CAVALRY-UPGRADES NO)
+	(set-goal ALLOW-BLACKSMITH-HAND-CANNONEER-UPGRADES NO)
+	(set-goal ALLOW-BLACKSMITH-INFANTRY-UPGRADES NO)
+	(set-goal ENABLE-VILLAGER-PRODUCTION YES)
+	(set-goal ALLOW-VILLAGER-DELETION NO)
+	(set-goal EVEN-ODD EVEN)
+	(set-strategic-number sn-enable-new-building-system 1)
+;	(set-strategic-number sn-dropsite-separation-distance 1)
+	(set-strategic-number sn-enable-boar-hunting 2)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-goal RESEARCH-ARCHER-UPGRADES NO)
+	(set-goal RESEARCH-SKIRMISHER-UPGRADES NO)
+	(set-goal RESEARCH-CAVALRY-ARCHER-UPGRADES NO)
+	(set-goal RESEARCH-HAND-CANNONEER-UPGRADES NO)
+	(set-goal RESEARCH-SWORDSMAN-UPGRADES NO)
+	(set-goal RESEARCH-SPEARMAN-UPGRADES NO)
+	(set-goal RESEARCH-EAGLE-UPGRADES NO)
+	(set-goal RESEARCH-SCOUT-UPGRADES NO)
+	(set-goal RESEARCH-KNIGHT-UPGRADES NO)
+	(set-goal RESEARCH-CAMEL-UPGRADES NO)
+	(set-goal RESEARCH-INFANTRY-UU-UPGRADES NO)
+	(set-goal RESEARCH-CAVALRY-UU-UPGRADES NO)
+	(set-goal RESEARCH-ARCHER-UU-UPGRADES NO)
+	(set-goal RESEARCH-CAVALRY-ARCHER-UU-UPGRADES NO)
+	(set-goal RESEARCH-HAND-CANNONEER-UU-UPGRADES NO)
+	(disable-self)
+)
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-task-ungrouped-soldiers 0)
+	(set-strategic-number sn-blot-exploration-map 1)
+	(set-strategic-number sn-cap-civilian-builders 10)
+	(set-strategic-number sn-number-explore-groups 1)
+	(set-strategic-number sn-minimum-explore-group-size 1)
+	(set-strategic-number sn-maximum-explore-group-size 1)
+	(set-strategic-number sn-intelligent-gathering 1)
+	(set-strategic-number sn-percent-civilian-explorers 25)
+	(set-strategic-number sn-percent-civilian-builders 75)
+	(set-strategic-number sn-percent-civilian-gatherers 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-maximum-food-drop-distance 9)
+	(set-strategic-number sn-maximum-wood-drop-distance 6)
+	(set-strategic-number sn-maximum-gold-drop-distance 6)
+	(set-strategic-number sn-maximum-stone-drop-distance 6)
+	(set-strategic-number sn-maximum-hunt-drop-distance 15)
+	(set-strategic-number sn-required-forest-tiles 10)
+	(set-strategic-number sn-max-retask-gather-amount 10)
+	(set-strategic-number sn-retask-gather-amount 10)
+	(set-strategic-number sn-home-exploration-time 300) ;5 minutes
+	(disable-self)
+)
+;general rules=====================================================================================================================
+(defrule	;after one minute it doesnt go far for food
+;	(or
+;		(game-time >= 60)
+		(not (sheep-and-forage-too-far))
+;	)
+=>
+	(set-strategic-number sn-maximum-food-drop-distance 6)
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-percent-civilian-builders 25)
+	(set-strategic-number sn-percent-civilian-gatherers 75)
+	(disable-self)
+)
+(defrule
+	(or
+		(current-age == dark-age)
+		(unit-type-count-total villager <= 25)
+	)
+=>
+	(set-strategic-number sn-enable-training-queue 1)
+	(disable-self)
+)
+(defrule
+	(current-age > dark-age)
+	(unit-type-count-total villager > 25)
+=>
+	(set-strategic-number sn-enable-training-queue 0)
+	(disable-self)
+)
+(defrule
+	(game-time >= 600)	;10 min
+=>
+	(set-strategic-number sn-enable-boar-hunting 1)
+	(disable-self)
+)
+(defrule
+	(game-time >= 0)	;0 min
+=>
+	(set-strategic-number sn-maximum-town-size 25)
+	(set-strategic-number sn-camp-max-distance 30)
+	(set-strategic-number sn-mill-max-distance 25)
+	(disable-self)
+)
+(defrule
+	(game-time >= 1200)	;20 min
+=>
+	(set-strategic-number sn-maximum-town-size 30)	;30
+	(set-strategic-number sn-camp-max-distance 40)
+	(set-strategic-number sn-mill-max-distance 30)
+	(disable-self)
+)
+(defrule
+	(game-time >= 2400)	;40 min
+=>
+	(set-strategic-number sn-maximum-town-size 40)	;35
+	(set-strategic-number sn-camp-max-distance 50)
+	(set-strategic-number sn-mill-max-distance 40)
+	(disable-self)
+)
+(defrule
+	(game-time >= 3600)	;60 min
+=>
+	(set-strategic-number sn-maximum-town-size 60)	;35
+	(set-strategic-number sn-camp-max-distance 70)
+	(set-strategic-number sn-mill-max-distance 60)
+	(disable-self)
+)
+
+(defrule
+	(game-time > 30)
+	(housing-headroom < 5)
+	(population-headroom > 0)
+	(can-build house)
+	(up-pending-objects c: house == 0)
+=>
+	(up-assign-builders c: house c: 1)
+	(build house)
+	
+)
+
+(defrule
+	(housing-headroom < 10)
+	(or
+		(building-type-count town-center >= 2)
+		(or
+			(building-type-count barracks >= 2)
+			(or
+				(building-type-count archery-range >= 2)
+				(or
+					(building-type-count stable >= 2)
+					(building-type-count siege-workshop >= 2)
+				)
+			)	
+		)
+	)
+	(population-headroom > 0)
+	(can-build house)
+	(up-pending-objects c: house == 0)
+=>
+	(up-assign-builders c: house c: 1)
+	(build house)
+)
+(defrule
+	(housing-headroom < 20)
+	(or
+		(building-type-count town-center >= 3)
+		(or
+			(building-type-count barracks >= 3)
+			(or
+				(building-type-count archery-range >= 3)
+				(or
+					(building-type-count stable >= 3)
+					(building-type-count siege-workshop >= 3)
+				)
+			)	
+		)
+	)
+	(population-headroom > 0)
+	(can-build house)
+	(up-pending-objects c: house == 0)
+=>
+	(up-assign-builders c: house c: 1)
+	(build house)
+)
+(defrule
+	(strategic-number sn-wood-gatherer-percentage > 0)
+	(resource-found wood)
+	(dropsite-min-distance wood > 3)
+	(dropsite-min-distance wood < 480)
+	(can-build lumber-camp)
+	(up-pending-objects c: lumber-camp <= 1)
+=>
+	(build lumber-camp)
+)
+(defrule
+	(building-type-count-total mill == 0)
+	(building-type-count-total lumber-camp > 0)
+	(can-build mill)
+=>
+	(build mill)
+)
+(defrule
+	(building-type-count-total mill == 0)
+	(dropsite-min-distance food > 3)
+	(resource-found food)
+	(can-build mill)
+=>
+	(build mill)
+)
+;(defrule
+;	(current-age >= castle-age)
+;	(dropsite-min-distance food > 8)
+;;	(building-type-count-total lumber-camp > 0)
+;	(resource-found food)
+;	(can-build mill)
+;=>
+;	(build mill)
+;)
+(defrule
+	(building-type-count-total mining-camp < 15) ;hacking to stop the AI spamming mining camps
+	(dropsite-min-distance gold > 3)
+	(resource-found gold)
+	(strategic-number sn-gold-gatherer-percentage > 0)
+;	(cc-players-unit-type-count 0 gold-mine > 0)
+	(up-pending-objects c: mining-camp == 0)
+	(can-build mining-camp)
+=>
+	(build mining-camp)
+)
+(defrule
+	(building-type-count-total mining-camp < 15) ;hacking to stop the AI spamming mining camps	
+	(dropsite-min-distance stone > 3)
+	(resource-found stone)
+	(strategic-number sn-stone-gatherer-percentage > 0)
+;	(cc-players-unit-type-count 0 stone-mine > 0)
+	(up-pending-objects c: mining-camp == 0)
+	(can-build mining-camp)
+=>
+	(build mining-camp)
+)

@@ -1,0 +1,148 @@
+;--------------------------------------------------------Tower Rush Setting-----------------------------------------------------
+
+(defconst dark-max-villager 21)
+(defconst feudal-max-villager 40)
+(defconst rush-max-tower 12)
+
+(defrule
+	(current-age == feudal-age)
+	(building-type-count watch-tower-line < rush-max-tower)
+=>
+	(set-strategic-number sn-percent-civilian-builders 100)
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-percent-civilian-gatherers 0)
+
+	(set-strategic-number sn-cap-civilian-builders 30)
+
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-gold-gatherer-percentage 0)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-stone-gatherer-percentage 25)
+
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(set-strategic-number sn-attack-intelligence 1)
+	(set-strategic-number sn-task-ungrouped-soldiers 1)
+	(set-strategic-number sn-garrison-rams 1)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-build watch-tower-line)
+=>
+	(build-forward watch-tower-line)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(building-type-count-total watch-tower-line >= rush-max-tower)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 55)
+	(set-strategic-number sn-gold-gatherer-percentage 10)
+	(set-strategic-number sn-wood-gatherer-percentage 30)
+	(set-strategic-number sn-stone-gatherer-percentage 5)
+)
+
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-strategic-number sn-maximum-town-size 10)
+	(disable-self)
+)
+
+;--------------------------------------------------------Build Buildings-----------------------------------------------------
+
+(defrule
+	(unit-type-count-total villager >= dark-max-villager)
+	(can-build mining-camp)
+	(building-type-count-total mining-camp < 2)
+=>
+	(build mining-camp)
+)
+
+(defrule
+	(can-build blacksmith)
+	(building-type-count-total blacksmith < 1)
+=>
+	(build blacksmith)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-build archery-range)
+	(building-available stable)
+	(building-type-count-total barracks >= 1)
+	(building-type-count-total stable < 1)
+=>
+	(build-forward stable)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-build archery-range)
+	(not(building-available stable))
+	(building-type-count-total barracks >= 1)
+	(building-type-count-total archery-range < 1)
+=>
+	(build-forward archery-range)
+)
+
+(defrule
+	(unit-type-count-total villager >= dark-max-villager)
+	(can-build barracks)
+	(building-type-count-total barracks < 1)
+=>
+	(build-forward barracks)
+)
+
+;(defrule
+;	(can-build archery-range)
+;	(building-type-count-total archery-range < 1)
+;=>
+;	(build-forward archery-range)
+;)
+
+;--------------------------------------------------------Train Units-----------------------------------------------------
+
+(defrule
+	(current-age == feudal-age)
+	(can-train spearman-line)
+	(unit-type-count spearman-line < 15)
+	(or
+		(wood-amount > 200)
+		(unit-type-count spearman-line < 2)
+	)
+=>
+	(train spearman-line)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-train archer-line)
+	(unit-type-count spearman-line > 2)
+	(unit-type-count archer-line < 15)
+	(or
+		(wood-amount > 200)
+		(unit-type-count archer-line < 2)
+	)
+=>
+	(train archer-line)
+)
+
+(defrule
+	(current-age == feudal-age)
+	(can-train scout-cavalry-line)
+	(unit-type-count scout-cavalry-line < 10)
+	(or
+		(food-amount > 800)
+		(unit-type-count scout-cavalry-line < 3)
+	)
+=>
+	(train scout-cavalry-line)
+)
+
+;--------------------------------------------------------Load Other Files-----------------------------------------------------
+
+(load "Rush\Strategy\Towers\Towers Hunting")
+(load "Rush\Strategy\Towers\Towers Castle")
+(load "Rush\Strategy\Towers\Towers Imperial")
+(load "Rush\Strategy\Towers\Towers Research")
