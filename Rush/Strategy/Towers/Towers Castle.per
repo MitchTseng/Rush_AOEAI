@@ -1,14 +1,23 @@
 ;---------------------------------------------------------Attack Timer--------------------------------------------------
 
 (defconst AttackTimer 1)
-(defconst AttackStatus 0)
+(defconst AttackStatus 111)
 
 (defrule
-  (goal AttackStatus 0)
-=>
-  (set-goal AttackStatus 1)
-  (enable-timer AttackTimer 30)
+  (true)
+ =>
+  (set-goal AttackStatus NO)
+  (disable-self)
 )
+
+(defrule
+  (goal AttackStatus NO)
+=>
+  (set-goal AttackStatus YES)
+  (enable-timer AttackTimer 90)
+  (chat-local "Set attack timer")
+)
+
 
 ;--------------------------------------------------------Set Town Size-----------------------------------------------------
 
@@ -80,7 +89,7 @@
 (defrule
 	(current-age == castle-age)
 	(can-train battering-ram-line)
-	(unit-type-count battering-ram-line < 3)
+	(unit-type-count battering-ram-line < 2)
 =>
 	(train battering-ram-line)
 )
@@ -104,7 +113,7 @@
 
 (defrule
 	(current-age == feudal-age)
-	(gold-amount > 200)
+	(gold-amount > 250)
 	(not(can-train knight-line))
 	(can-train eagle-warrior-line)
 	(unit-type-count eagle-warrior-line < 5)
@@ -132,7 +141,7 @@
 (defrule
 	(current-age == castle-age)
 	(can-train spearman-line)
-	(unit-type-count spearman-line < 35)
+	(unit-type-count spearman-line < 55)
 	(or
 		(wood-amount > 200)
 		(unit-type-count spearman-line < 15)
@@ -148,7 +157,7 @@
 ;	(unit-type-count battering-ram-line > 2)
 ;=>
 ;	(disable-timer AttackTimer)
-;	(set-goal AttackStatus 0)
+;	(set-goal AttackStatus NO)
 ;	(attack-now)
 ;	(chat-local "Attack type Rams")
 ;)
@@ -156,9 +165,10 @@
 (defrule
 	(current-age == castle-age)
 	(unit-type-count knight-line > 10)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Knights")
 )
@@ -166,9 +176,10 @@
 (defrule
 	(current-age == castle-age)
 	(unit-type-count eagle-warrior-line > 10)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Eagle Warriors")
 )
@@ -176,9 +187,10 @@
 (defrule
 	(current-age == castle-age)
 	(unit-type-count camel-line > 10)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Camels")
 )
@@ -186,9 +198,10 @@
 (defrule
 	(current-age == castle-age)
 	(military-population > 25)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Army")
 )
@@ -228,29 +241,44 @@
 (defrule
 	(current-age == castle-age)
 	(wood-amount > 500)
+	(food-amount < 500)
 =>
-	(set-strategic-number sn-food-gatherer-percentage 35)
-	(set-strategic-number sn-gold-gatherer-percentage 25)
-	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-food-gatherer-percentage 45)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 30)
 	(set-strategic-number sn-stone-gatherer-percentage 5)
 )
 
 (defrule
 	(current-age == castle-age)
-	(food-amount > 500)
+	(wood-amount < 500)
+	(food-amount < 500)
 =>
-	(set-strategic-number sn-food-gatherer-percentage 25)
-	(set-strategic-number sn-gold-gatherer-percentage 30)
+	(set-strategic-number sn-food-gatherer-percentage 45)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+
+(defrule
+	(current-age == castle-age)
+	(food-amount > 500)
+	(wood-amount < 500)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
 	(set-strategic-number sn-wood-gatherer-percentage 35)
 	(set-strategic-number sn-stone-gatherer-percentage 10)
 )
 
 (defrule
 	(current-age == castle-age)
-	(gold-amount > 500)
+	(gold-amount < 500)
+	(food-amount > 500)
+	(wood-amount > 500)
 =>
 	(set-strategic-number sn-food-gatherer-percentage 35)
-	(set-strategic-number sn-gold-gatherer-percentage 20)
-	(set-strategic-number sn-wood-gatherer-percentage 40)
-	(set-strategic-number sn-stone-gatherer-percentage 5)
+	(set-strategic-number sn-gold-gatherer-percentage 30)
+	(set-strategic-number sn-wood-gatherer-percentage 25)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
 )
