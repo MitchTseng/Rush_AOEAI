@@ -56,6 +56,14 @@
 
 (defrule
 	(current-age == castle-age)
+	(can-build archery-range)
+	(building-type-count-total archery-range < 2)
+=>
+	(build archery-range)
+)
+
+(defrule
+	(current-age == castle-age)
 	(building-available stable)
 	(can-build stable)
 	(building-type-count-total stable < 2)
@@ -96,10 +104,27 @@
 
 (defrule
 	(current-age == castle-age)
+	(can-train mangonel-line)
+	(unit-type-count mangonel-line < 2)
+=>
+	(train mangonel-line)
+)
+
+(defrule
+	(current-age == castle-age)
 	(can-train knight-line)
 	(unit-type-count knight-line < 60)
 =>
 	(train knight-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train cavalry-archer-line)
+	(unit-type-count knight-line > 5)
+	(unit-type-count cavalry-archer-line < 60)
+=>
+	(train cavalry-archer-line)
 )
 
 (defrule
@@ -277,8 +302,8 @@
 	(food-amount > 500)
 	(wood-amount > 500)
 =>
-	(set-strategic-number sn-food-gatherer-percentage 35)
-	(set-strategic-number sn-gold-gatherer-percentage 30)
+	(set-strategic-number sn-food-gatherer-percentage 30)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
 	(set-strategic-number sn-wood-gatherer-percentage 25)
-	(set-strategic-number sn-stone-gatherer-percentage 10)
+	(set-strategic-number sn-stone-gatherer-percentage 5)
 )

@@ -8,6 +8,13 @@
 )
 
 (defrule
+	(can-research ri-bodkin-arrow)
+=>
+	(research ri-bodkin-arrow)
+	(disable-self)
+)
+
+(defrule
 	(can-research ri-scale-mail)
 =>
 	(research ri-scale-mail)
