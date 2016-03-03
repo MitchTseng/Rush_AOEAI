@@ -76,6 +76,14 @@
 )
 
 (defrule
+	(current-age == castle-age)
+	(can-train mangonel-line)
+	(unit-type-count mangonel-line < 6)
+=>
+	(train mangonel-line)
+)
+
+(defrule
 	(current-age == imperial-age)
 	(can-train trebuchet)
 	(unit-type-count trebuchet < 5)
@@ -89,6 +97,19 @@
 	(unit-type-count knight-line < 100)
 =>
 	(train knight-line)
+)
+
+(defrule
+	(current-age == castle-age)
+	(can-train cavalry-archer-line)
+	(or
+		(unit-type-count knight-line > 5)
+		(unit-type-count camel-line > 5)
+	)
+	(unit-type-count battering-ram-line > 3)
+	(unit-type-count cavalry-archer-line < 60)
+=>
+	(train cavalry-archer-line)
 )
 
 (defrule
@@ -112,7 +133,7 @@
 (defrule
 	(current-age == imperial-age)
 	(can-train spearman-line)
-	(unit-type-count spearman-line < 55)
+	(unit-type-count spearman-line < 75)
 	(or
 		(wood-amount > 200)
 		(unit-type-count spearman-line < 25)
@@ -126,9 +147,10 @@
 ;(defrule
 ;	(current-age == imperial-age)
 ;	(unit-type-count battering-ram-line > 5)
+;	(timer-triggered AttackTimer)
 ;=>
 ;	(disable-timer AttackTimer)
-;	(set-goal AttackStatus 0)
+;	(set-goal AttackStatus NO)
 ;	(attack-now)
 ;	(chat-local "Attack type Rams")
 ;)
@@ -136,9 +158,10 @@
 (defrule
 	(current-age == imperial-age)
 	(unit-type-count knight-line > 10)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Knights")
 )
@@ -146,9 +169,10 @@
 (defrule
 	(current-age == imperial-age)
 	(unit-type-count eagle-warrior-line > 10)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Eagle Warriors")
 )
@@ -156,9 +180,10 @@
 (defrule
 	(current-age == imperial-age)
 	(unit-type-count camel-line > 10)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Camels")
 )
@@ -166,9 +191,10 @@
 (defrule
 	(current-age == imperial-age)
 	(military-population > 25)
+	(timer-triggered AttackTimer)
 =>
 	(disable-timer AttackTimer)
-	(set-goal AttackStatus 0)
+	(set-goal AttackStatus NO)
 	(attack-now)
 	(chat-local "Attack type Army")
 )

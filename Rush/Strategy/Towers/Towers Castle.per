@@ -121,8 +121,12 @@
 (defrule
 	(current-age == castle-age)
 	(can-train cavalry-archer-line)
-	(unit-type-count knight-line > 5)
-	(unit-type-count cavalry-archer-line < 60)
+	(or
+		(unit-type-count knight-line > 5)
+		(unit-type-count camel-line > 5)
+	)
+	(unit-type-count battering-ram-line > 1)
+	(unit-type-count cavalry-archer-line < 20)
 =>
 	(train cavalry-archer-line)
 )
